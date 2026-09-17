@@ -1592,6 +1592,10 @@ function mostrarHistorico() {
    CARREGAR REGISTROS DO GOOGLE SHEETS
    ===================================================== */
 
+/* =====================================================
+   CARREGAR REGISTROS DO GOOGLE SHEETS
+   ===================================================== */
+
 async function carregarRegistros() {
 
   try {
@@ -1612,7 +1616,7 @@ async function carregarRegistros() {
       Array.isArray(
         dados.registros
       )
-    {
+    ) {
 
       registros =
         dados.registros
@@ -1702,12 +1706,16 @@ async function carregarRegistros() {
 
   } catch (erro) {
 
+    console.error(
+      "Erro ao carregar registros:",
+      erro
+    );
+
     atualizarTela();
 
   }
 
 }
-
 
 
 /* =====================================================
