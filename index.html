@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Glicemia • Meu acompanhamento</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff8fb;
+      color: #4b3f46;
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px 16px 40px;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px 10px 25px;
+    }
+
+    .heart {
+      font-size: 38px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 26px;
+      color: #9b6178;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #8b7a82;
+    }
+
+    .progress-box {
+      background: white;
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: 0 5px 20px rgba(120, 80, 100, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .progress-title {
+      font-size: 14px;
+      color: #8b7a82;
+      margin-bottom: 10px;
+    }
+
+    .progress-number {
+      font-size: 30px;
+      font-weight: bold;
+      color: #9b6178;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #f1e5ea;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #c98fa7;
+      border-radius: 20px;
+      transition: 0.3s;
+    }
+
+    .card {
+      background: white;
+      border-radius: 22px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 5px 20px rgba(120, 80, 100, 0.08);
+    }
+
+    .day-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .day-title h2 {
+      color: #8f596f;
+      font-size: 20px;
+    }
+
+    .date {
+      font-size: 13px;
+      color: #9b8991;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 7px;
+      color: #6f5c65;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid #ead9df;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 16px;
+      outline: none;
+      background: #fffafd;
+      color: #4b3f46;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #c98fa7;
+    }
+
+    .value-input {
+      flex: 1;
+    }
+
+    .time-input {
+      width: 115px;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 15px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .save-button {
+      background: #b97892;
+      color: white;
+      margin-top: 5px;
+    }
+
+    .save-button:active {
+      transform: scale(0.98);
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+      min-height: 20px;
+    }
+
+    .history-title {
+      font-size: 21px;
+      color: #8f596f;
+      margin: 28px 0 14px;
+    }
+
+    .history-item {
+      background: white;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 15px rgba(120, 80, 100, 0.06);
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .history-day {
+      font-weight: bold;
+      color: #8f596f;
+    }
+
+    .history-date {
+      color: #9b8991;
+      font-size: 13px;
+    }
+
+    .values {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .value-box {
+      background: #fff7fa;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .value-box strong {
+      display: block;
+      font-size: 16px;
+      color: #7d5967;
+      margin-top: 3px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #9b8991;
+      font-size: 14px;
+      padding: 20px;
+    }
+
+    @media (max-width: 400px) {
+      .time-input {
+        width: 100px;
+      }
+
+      h1 {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+    <div class="heart">♡</div>
+    <h1>Meu acompanhamento</h1>
+    <p class="subtitle">
+      Registro diário da glicemia
+    </p>
+  </header>
+
+  <div class="progress-box">
+    <div class="progress-title">Progresso do acompanhamento</div>
+
+    <div class="progress-number">
+      <span id="diasPreenchidos">0</span>/10 dias
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <div class="day-title">
+      <h2 id="diaTitulo">Dia 1</h2>
+      <span class="date" id="dataAtual"></span>
+    </div>
+
+    <div class="field">
+      <label>🌙 Jejum / ao acordar</label>
+
+      <div class="input-row">
+        <input
+          id="jejum"
+          class="value-input"
+          type="number"
+          placeholder="Glicemia"
+          inputmode="decimal"
+        >
+
+        <input
+          id="horarioJejum"
+          class="time-input"
+          type="time"
+        >
+      </div>
+    </div>
+
+    <div class="field">
+      <label>☕ Antes do café da manhã</label>
+
+      <div class="input-row">
+        <input
+          id="cafe"
+          class="value-input"
+          type="number"
+          placeholder="Glicemia"
+          inputmode="decimal"
+        >
+
+        <input
+          id="horarioCafe"
+          class="time-input"
+          type="time"
+        >
+      </div>
+    </div>
+
+    <div class="field">
+      <label>🍽️ Antes do almoço</label>
+
+      <div class="input-row">
+        <input
+          id="almoco"
+          class="value-input"
+          type="number"
+          placeholder="Glicemia"
+          inputmode="decimal"
+        >
+
+        <input
+          id="horarioAlmoco"
+          class="time-input"
+          type="time"
+        >
+      </div>
+    </div>
+
+    <div class="field">
+      <label>🌙 Antes do jantar</label>
+
+      <div class="input-row">
+        <input
+          id="jantar"
+          class="value-input"
+          type="number"
+          placeholder="Glicemia"
+          inputmode="decimal"
+        >
+
+        <input
+          id="horarioJantar"
+          class="time-input"
+          type="time"
+        >
+      </div>
+    </div>
+
+    <div class="field">
+      <label>📝 Observações</label>
+
+      <textarea
+        id="observacoes"
+        placeholder="Anote algo importante do dia..."
+      ></textarea>
+    </div>
+
+    <button class="save-button" onclick="salvarRegistro()">
+      Salvar registro
+    </button>
+
+    <div class="status" id="status"></div>
+
+  </div>
+
+  <h2 class="history-title">
+    Histórico
+  </h2>
+
+  <div id="historico">
+    <div class="empty">
+      Nenhum registro salvo ainda.
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+
+  /*
+   * URL DA SUA API
+   */
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbx-ua_78tMGIbR25K7NlrTs18Gp4cnar8sHaqcnvyNMOy2dnPFBcMlnPUuzX7f7IR_a/exec";
+
+
+  /*
+   * Dados locais
+   */
+  let registros =
+    JSON.parse(localStorage.getItem("glicemia10dias")) || [];
+
+
+  /*
+   * Data atual
+   */
+  function dataHoje() {
+
+    const hoje = new Date();
+
+    const dia = String(hoje.getDate()).padStart(2, "0");
+    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+    const ano = hoje.getFullYear();
+
+    return `${dia}/${mes}/${ano}`;
+  }
+
+
+  /*
+   * ID do registro
+   */
+  function gerarID() {
+
+    return Date.now().toString();
+
+  }
+
+
+  /*
+   * Atualiza tela
+   */
+  function atualizarTela() {
+
+    document.getElementById("dataAtual").innerText =
+      dataHoje();
+
+    const quantidade =
+      registros.length > 10 ? 10 : registros.length;
+
+    document.getElementById("diasPreenchidos").innerText =
+      quantidade;
+
+    document.getElementById("progressFill").style.width =
+      (quantidade * 10) + "%";
+
+    mostrarHistorico();
+
+  }
+
+
+  /*
+   * Salvar registro
+   */
+  async function salvarRegistro() {
+
+    const status =
+      document.getElementById("status");
+
+    const dados = {
+
+      id: gerarID(),
+
+      data: dataHoje(),
+
+      jejum:
+        document.getElementById("jejum").value,
+
+      horarioJejum:
+        document.getElementById("horarioJejum").value,
+
+      cafe:
+        document.getElementById("cafe").value,
+
+      horarioCafe:
+        document.getElementById("horarioCafe").value,
+
+      almoco:
+        document.getElementById("almoco").value,
+
+      horarioAlmoco:
+        document.getElementById("horarioAlmoco").value,
+
+      jantar:
+        document.getElementById("jantar").value,
+
+      horarioJantar:
+        document.getElementById("horarioJantar").value,
+
+      observacoes:
+        document.getElementById("observacoes").value
+
+    };
+
+
+    /*
+     * Verifica se existe pelo menos um valor
+     */
+    if (
+      !dados.jejum &&
+      !dados.cafe &&
+      !dados.almoco &&
+      !dados.jantar
+    ) {
+
+      status.innerText =
+        "Preencha pelo menos uma glicemia.";
+
+      status.style.color = "#a85c72";
+
+      return;
+
+    }
+
+
+    status.innerText =
+      "Salvando...";
+
+    status.style.color = "#8b7a82";
+
+
+    /*
+     * Salva localmente
+     */
+    registros.push(dados);
+
+    if (registros.length > 10) {
+
+      registros.shift();
+
+    }
+
+    localStorage.setItem(
+      "glicemia10dias",
+      JSON.stringify(registros)
+    );
+
+
+    /*
+     * Envia para Google Sheets
+     */
+    try {
+
+      await fetch(API_URL, {
+
+        method: "POST",
+
+        mode: "no-cors",
+
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+
+        body: JSON.stringify(dados)
+
+      });
+
+      status.innerText =
+        "✓ Registro salvo!";
+
+      status.style.color =
+        "#6f9278";
+
+
+    } catch (erro) {
+
+      status.innerText =
+        "Salvo no aparelho. Verifique a conexão.";
+
+      status.style.color =
+        "#a85c72";
+
+    }
+
+
+    limparCampos();
+
+    atualizarTela();
+
+  }
+
+
+  /*
+   * Limpa formulário
+   */
+  function limparCampos() {
+
+    document.getElementById("jejum").value = "";
+    document.getElementById("horarioJejum").value = "";
+
+    document.getElementById("cafe").value = "";
+    document.getElementById("horarioCafe").value = "";
+
+    document.getElementById("almoco").value = "";
+    document.getElementById("horarioAlmoco").value = "";
+
+    document.getElementById("jantar").value = "";
+    document.getElementById("horarioJantar").value = "";
+
+    document.getElementById("observacoes").value = "";
+
+  }
+
+
+  /*
+   * Histórico
+   */
+  function mostrarHistorico() {
+
+    const container =
+      document.getElementById("historico");
+
+
+    if (registros.length === 0) {
+
+      container.innerHTML =
+        '<div class="empty">Nenhum registro salvo ainda.</div>';
+
+      return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    registros
+      .slice()
+      .reverse()
+      .forEach(function(registro, index) {
+
+        const numeroDia =
+          registros.length - index;
+
+
+        const item =
+          document.createElement("div");
+
+        item.className =
+          "history-item";
+
+
+        item.innerHTML = `
+
+          <div class="history-header">
+
+            <span class="history-day">
+              Dia ${numeroDia}
+            </span>
+
+            <span class="history-date">
+              ${registro.data}
+            </span>
+
+          </div>
+
+          <div class="values">
+
+            <div class="value-box">
+              Jejum
+              <strong>
+                ${registro.jejum || "—"}
+              </strong>
+            </div>
+
+            <div class="value-box">
+              Café
+              <strong>
+                ${registro.cafe || "—"}
+              </strong>
+            </div>
+
+            <div class="value-box">
+              Almoço
+              <strong>
+                ${registro.almoco || "—"}
+              </strong>
+            </div>
+
+            <div class="value-box">
+              Jantar
+              <strong>
+                ${registro.jantar || "—"}
+              </strong>
+            </div>
+
+          </div>
+
+        `;
+
+
+        container.appendChild(item);
+
+      });
+
+  }
+
+
+  /*
+   * Inicialização
+   */
+  atualizarTela();
+
+</script>
+
+</body>
+</html>
