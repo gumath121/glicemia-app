@@ -1755,7 +1755,59 @@ if ("serviceWorker" in navigator) {
 
 }
 
-</script>
+async function ativarPush() {
 
+  try {
+
+    if (!("serviceWorker" in navigator)) {
+      console.log("Service Worker não disponível.");
+      return;
+    }
+
+    if (!("PushManager" in window)) {
+      console.log("Push não disponível neste navegador.");
+      return;
+    }
+
+    const permissao = await Notification.requestPermission();
+
+    if (permissao !== "granted") {
+      console.log("Permissão para notificações não concedida.");
+      return;
+    }
+
+    const registro = await navigator.serviceWorker.ready;
+
+    let inscricao = await registro.pushManager.getSubscription();
+
+    if (!inscricao) {
+
+      inscricao = await registro.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: VAPID_PUBLIC_KEY
+      });
+
+    }
+
+    console.log("PUSH ATIVADO!");
+    console.log(inscricao);
+
+    localStorage.setItem(
+      "pushSubscription",
+      JSON.stringify(inscricao)
+    );
+
+  } catch (erro) {
+
+    console.error("Erro ao ativar Push:", erro);
+
+  }
+
+}
+  
+  ativarPush();
+
+</script>
+  
 </body>
 </html>
