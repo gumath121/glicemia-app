@@ -1,92 +1,173 @@
-self.addEventListener("install", function(event) {
-  self.skipWaiting();
-});
-
-self.addEventListener("activate", function(event) {
-  event.waitUntil(
-    clients.claim()
-  );
-});
-
 /* =====================================================
-   NOTIFICAÇÃO RECEBIDA
+   FIREBASE SERVICE WORKER
+   GLICEMIA APP
    ===================================================== */
 
-self.addEventListener("push", function(event) {
+importScripts(
+  "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"
+);
 
-  let dados = {
-    titulo: "Lembrete de glicemia",
-    mensagem: "Está na hora de registrar sua glicemia ❤️"
-  };
+importScripts(
+  "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"
+);
 
-  if (event.data) {
-    try {
-      dados = event.data.json();
-    } catch (erro) {
-      console.log("Dados da notificação não são JSON.");
-    }
-  }
 
-  event.waitUntil(
-    self.registration.showNotification(dados.titulo, {
-      body: dados.mensagem,
-      icon: "./icon-192.png",
-      badge: "./icon-192.png",
-      vibrate: [200, 100, 200],
-      data: {
-        url: "./"
-      }
-    })
-  );
+/* =====================================================
+   FIREBASE CONFIG
+   ===================================================== */
+
+firebase.initializeApp({
+
+  apiKey:
+    "AIzaSyBFOFv0RsvmtrSOxchD3kUVAMqdmp6VVF0",
+
+  authDomain:
+    "glicemia-app-686aa.firebaseapp.com",
+
+  projectId:
+    "glicemia-app-686aa",
+
+  storageBucket:
+    "glicemia-app-686aa.firebasestorage.app",
+
+  messagingSenderId:
+    "312445316096",
+
+  appId:
+    "1:312445316096:web:3c274c00e91dfc2686fce5"
 
 });
+
+
+/* =====================================================
+   FIREBASE MESSAGING
+   ===================================================== */
+
+const messaging =
+  firebase.messaging();
+
+
+/* =====================================================
+   NOTIFICAÇÃO EM SEGUNDO PLANO
+   ===================================================== */
+
+messaging.onBackgroundMessage(
+  function(payload) {
+
+    console.log(
+      "[sw.js] Mensagem recebida:",
+      payload
+    );
+
+
+    const notificationTitle =
+      payload.notification?.title ||
+      "Hora da glicemia 💗";
+
+
+    const notificationOptions = {
+
+      body:
+        payload.notification?.body ||
+        "Não se esqueça de registrar sua glicemia de hoje.",
+
+      icon:
+        "./icon-192.png",
+
+      badge:
+        "./icon-192.png",
+
+      data:
+        payload.data || {}
+
+    };
+
+
+    self.registration.showNotification(
+      notificationTitle,
+      notificationOptions
+    );
+
+  }
+);
+
 
 /* =====================================================
    CLIQUE NA NOTIFICAÇÃO
    ===================================================== */
 
-self.addEventListener("notificationclick", function(event) {
+self.addEventListener(
+  "notificationclick",
+  function(event) {
 
-  event.notification.close();
+    event.notification.close();
 
-  event.waitUntil(
-    clients.matchAll({
-      type: "window",
-      includeUncontrolled: true
-    }).then(function(lista) {
 
-      for (const cliente of lista) {
+    event.waitUntil(
 
-        if ("focus" in cliente) {
-          return cliente.focus();
-        }
-
-      }
-
-      if (clients.openWindow) {
-        return clients.openWindow("./");
-      }
-
-    })
-  );
-
-});
-
-/* =====================================================
-   CACHE / INTERNET
-   ===================================================== */
-
-self.addEventListener("fetch", function(event) {
-
-  event.respondWith(
-
-    fetch(event.request)
-      .catch(function() {
-
-        return caches.match(event.request);
-
+      clients.matchAll({
+        type: "window",
+        includeUncontrolled: true
       })
 
-  );
+      .then(
+        function(clientList) {
 
-});
+          for (
+            const client of clientList
+          ) {
+
+            if (
+              "focus" in client
+            ) {
+
+              return client.focus();
+
+            }
+
+          }
+
+
+          if (
+            clients.openWindow
+          ) {
+
+            return clients.openWindow(
+              "./"
+            );
+
+          }
+
+        }
+      )
+
+    );
+
+  }
+);
+
+
+/* =====================================================
+   SERVICE WORKER
+   ===================================================== */
+
+self.addEventListener(
+  "install",
+  function(event) {
+
+    self.skipWaiting();
+
+  }
+);
+
+
+self.addEventListener(
+  "activate",
+  function(event) {
+
+    event.waitUntil(
+      clients.claim()
+    );
+
+  }
+);
