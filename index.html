@@ -808,11 +808,9 @@ const VAPID_PUBLIC_KEY =
 
 function obterUsuarioId() {
 
-  let id =
-    localStorage.getItem(
-      "glicemiaUsuarioId"
-    );
+  const CHAVE_ID = "glicemiaUsuarioId_v2";
 
+  let id = localStorage.getItem(CHAVE_ID);
 
   if (!id) {
 
@@ -821,8 +819,7 @@ function obterUsuarioId() {
       crypto.randomUUID
     ) {
 
-      id =
-        crypto.randomUUID();
+      id = crypto.randomUUID();
 
     } else {
 
@@ -836,42 +833,17 @@ function obterUsuarioId() {
 
     }
 
-
     localStorage.setItem(
-      "glicemiaUsuarioId",
+      CHAVE_ID,
       id
     );
-
   }
 
-
   return id;
-
 }
-
 
 const USUARIO_ID =
   obterUsuarioId();
-
-
-
-/* =====================================================
-   REGISTROS LOCAIS
-   ===================================================== */
-
-const CHAVE_REGISTROS =
-  "glicemia10dias_" +
-  USUARIO_ID;
-
-
-let registros =
-  JSON.parse(
-    localStorage.getItem(
-      CHAVE_REGISTROS
-    )
-  ) || [];
-
-
 
 /* =====================================================
    DATA DE HOJE
