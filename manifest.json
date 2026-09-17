@@ -1,0 +1,11 @@
+{
+  "name": "Meu acompanhamento de glicemia",
+  "short_name": "Glicemia",
+  "description": "Acompanhamento diário da glicemia",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fff8fb",
+  "theme_color": "#b97892",
+  "orientation": "portrait",
+  "icons": []
+}
