@@ -774,18 +774,10 @@ const firebaseConfig = {
 };
 
 
-/*
- * Inicializa Firebase
- */
-
 firebase.initializeApp(
   firebaseConfig
 );
 
-
-/*
- * Firebase Messaging
- */
 
 const messaging =
   firebase.messaging();
@@ -811,13 +803,71 @@ const VAPID_PUBLIC_KEY =
 
 
 /* =====================================================
+   IDENTIFICAÇÃO DO USUÁRIO / APARELHO
+   ===================================================== */
+
+function obterUsuarioId() {
+
+  let id =
+    localStorage.getItem(
+      "glicemiaUsuarioId"
+    );
+
+
+  if (!id) {
+
+    if (
+      window.crypto &&
+      crypto.randomUUID
+    ) {
+
+      id =
+        crypto.randomUUID();
+
+    } else {
+
+      id =
+        "usuario-" +
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .substring(2, 10);
+
+    }
+
+
+    localStorage.setItem(
+      "glicemiaUsuarioId",
+      id
+    );
+
+  }
+
+
+  return id;
+
+}
+
+
+const USUARIO_ID =
+  obterUsuarioId();
+
+
+
+/* =====================================================
    REGISTROS LOCAIS
    ===================================================== */
+
+const CHAVE_REGISTROS =
+  "glicemia10dias_" +
+  USUARIO_ID;
+
 
 let registros =
   JSON.parse(
     localStorage.getItem(
-      "glicemia10dias"
+      CHAVE_REGISTROS
     )
   ) || [];
 
@@ -1254,6 +1304,10 @@ async function salvarRegistro() {
 
   const dados = {
 
+    usuarioId:
+      USUARIO_ID,
+
+
     id:
       "Dia " + diaAtual,
 
@@ -1394,7 +1448,7 @@ async function salvarRegistro() {
 
 
   localStorage.setItem(
-    "glicemia10dias",
+    CHAVE_REGISTROS,
     JSON.stringify(
       registros
     )
@@ -1592,17 +1646,17 @@ function mostrarHistorico() {
    CARREGAR REGISTROS DO GOOGLE SHEETS
    ===================================================== */
 
-/* =====================================================
-   CARREGAR REGISTROS DO GOOGLE SHEETS
-   ===================================================== */
-
 async function carregarRegistros() {
 
   try {
 
     const resposta =
       await fetch(
-        API_URL
+        API_URL +
+        "?usuarioId=" +
+        encodeURIComponent(
+          USUARIO_ID
+        )
       );
 
 
@@ -1610,98 +1664,119 @@ async function carregarRegistros() {
       await resposta.json();
 
 
-    if (
-      dados &&
-      dados.sucesso &&
-      Array.isArray(
-        dados.registros
-      )
-    ) {
+    /*
+     * Aceita tanto:
+     *
+     * { sucesso: true, registros: [...] }
+     *
+     * quanto:
+     *
+     * [...]
+     */
 
-      registros =
-        dados.registros
-          .filter(
-            function(registro) {
-
-              return registro.data;
-
-            }
-          )
-          .map(
-            function(registro) {
-
-              return {
-
-                id:
-                  registro.id || "",
-
-
-                data:
-                  registro.data || "",
-
-
-                jejum:
-                  registro.jejum || "",
-
-
-                horarioJejum:
-                  registro.horarioJejum || "",
-
-
-                cafe:
-                  registro.cafe || "",
-
-
-                horarioCafe:
-                  registro.horarioCafe || "",
-
-
-                almoco:
-                  registro.almoco || "",
-
-
-                horarioAlmoco:
-                  registro.horarioAlmoco || "",
-
-
-                jantar:
-                  registro.jantar || "",
-
-
-                horarioJantar:
-                  registro.horarioJantar || "",
-
-
-                observacoes:
-                  registro.observacoes || ""
-
-              };
-
-            }
+    const lista =
+      Array.isArray(dados)
+        ? dados
+        : (
+            dados &&
+            Array.isArray(
+              dados.registros
+            )
+              ? dados.registros
+              : []
           );
 
 
-      organizarRegistros();
+    registros =
+      lista
+        .filter(
+          function(registro) {
+
+            return (
+              registro &&
+              registro.data
+            );
+
+          }
+        )
+        .map(
+          function(registro) {
+
+            return {
+
+              usuarioId:
+                registro.usuarioId ||
+                USUARIO_ID,
 
 
-      registros =
-        registros.slice(
-          0,
-          10
+              id:
+                registro.id || "",
+
+
+              data:
+                registro.data || "",
+
+
+              jejum:
+                registro.jejum || "",
+
+
+              horarioJejum:
+                registro.horarioJejum || "",
+
+
+              cafe:
+                registro.cafe || "",
+
+
+              horarioCafe:
+                registro.horarioCafe || "",
+
+
+              almoco:
+                registro.almoco || "",
+
+
+              horarioAlmoco:
+                registro.horarioAlmoco || "",
+
+
+              jantar:
+                registro.jantar || "",
+
+
+              horarioJantar:
+                registro.horarioJantar || "",
+
+
+              observacoes:
+                registro.observacoes || ""
+
+            };
+
+          }
         );
 
 
-      localStorage.setItem(
-        "glicemia10dias",
-        JSON.stringify(
-          registros
-        )
+    organizarRegistros();
+
+
+    registros =
+      registros.slice(
+        0,
+        10
       );
 
 
-      atualizarTela();
+    localStorage.setItem(
+      CHAVE_REGISTROS,
+      JSON.stringify(
+        registros
+      )
+    );
 
-    }
+
+    atualizarTela();
 
 
   } catch (erro) {
@@ -1711,11 +1786,13 @@ async function carregarRegistros() {
       erro
     );
 
+
     atualizarTela();
 
   }
 
 }
+
 
 
 /* =====================================================
@@ -1726,10 +1803,6 @@ let timerLembrete =
   null;
 
 
-
-/*
- * Verifica configuração
- */
 
 function verificarConfiguracaoLembrete() {
 
@@ -1817,10 +1890,6 @@ async function ativarLembrete() {
   }
 
 
-  /*
-   * Solicita permissão
-   */
-
   if (
     "Notification" in window
   ) {
@@ -1847,26 +1916,14 @@ async function ativarLembrete() {
   }
 
 
-  /*
-   * Salva horário
-   */
-
   localStorage.setItem(
     "horarioLembreteGlicemia",
     horario
   );
 
 
-  /*
-   * Ativa Push Firebase
-   */
-
   await ativarPush();
 
-
-  /*
-   * Esconde tela
-   */
 
   document.getElementById(
     "telaLembrete"
@@ -1882,24 +1939,15 @@ async function ativarLembrete() {
   );
 
 
-  /*
-   * Agenda enquanto o app
-   * estiver aberto
-   */
-
   iniciarLembrete(
     horario
   );
 
 
-  /*
-   * Confirmação
-   */
-
   if (
     "Notification" in window &&
     Notification.permission ===
-    "granted"
+      "granted"
   ) {
 
     try {
@@ -2080,7 +2128,7 @@ function mostrarNotificacao() {
   if (
     "Notification" in window &&
     Notification.permission ===
-    "granted"
+      "granted"
   ) {
 
     try {
@@ -2121,10 +2169,6 @@ async function ativarPush() {
 
   try {
 
-    /*
-     * Verifica Service Worker
-     */
-
     if (
       !("serviceWorker" in navigator)
     ) {
@@ -2137,10 +2181,6 @@ async function ativarPush() {
 
     }
 
-
-    /*
-     * Verifica Firebase
-     */
 
     if (
       typeof firebase ===
@@ -2156,10 +2196,6 @@ async function ativarPush() {
     }
 
 
-    /*
-     * Verifica Notification
-     */
-
     if (
       !("Notification" in window)
     ) {
@@ -2172,10 +2208,6 @@ async function ativarPush() {
 
     }
 
-
-    /*
-     * Permissão
-     */
 
     let permissao =
       Notification.permission;
@@ -2206,17 +2238,9 @@ async function ativarPush() {
     }
 
 
-    /*
-     * Pega o Service Worker
-     */
-
     const registro =
       await navigator.serviceWorker.ready;
 
-
-    /*
-     * Obtém token do Firebase
-     */
 
     const token =
       await messaging.getToken({
@@ -2241,10 +2265,6 @@ async function ativarPush() {
     }
 
 
-    /*
-     * Salva token localmente
-     */
-
     localStorage.setItem(
       "firebaseMessagingToken",
       token
@@ -2261,11 +2281,6 @@ async function ativarPush() {
       token
     );
 
-
-    /*
-     * Também guarda a inscrição
-     * existente do navegador
-     */
 
     try {
 
@@ -2368,11 +2383,6 @@ if (
 /* =====================================================
    TENTAR ATIVAR PUSH
    ===================================================== */
-
-/*
- * Se o horário já estiver configurado,
- * tenta registrar o Firebase novamente.
- */
 
 window.addEventListener(
   "load",
