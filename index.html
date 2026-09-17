@@ -845,6 +845,21 @@ function obterUsuarioId() {
 const USUARIO_ID =
   obterUsuarioId();
 
+  /* =====================================================
+   REGISTROS LOCAIS
+   ===================================================== */
+
+const CHAVE_REGISTROS =
+  "glicemia10dias_" +
+  USUARIO_ID;
+
+let registros =
+  JSON.parse(
+    localStorage.getItem(
+      CHAVE_REGISTROS
+    )
+  ) || [];
+  
 /* =====================================================
    DATA DE HOJE
    ===================================================== */
