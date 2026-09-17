@@ -258,35 +258,59 @@
 
   <header>
     <div class="heart">♡</div>
+
     <h1>Meu acompanhamento</h1>
+
     <p class="subtitle">
       Registro diário da glicemia
     </p>
   </header>
 
+
   <div class="progress-box">
-    <div class="progress-title">Progresso do acompanhamento</div>
+
+    <div class="progress-title">
+      Progresso do acompanhamento
+    </div>
 
     <div class="progress-number">
       <span id="diasPreenchidos">0</span>/10 dias
     </div>
 
     <div class="progress-bar">
-      <div class="progress-fill" id="progressFill"></div>
+      <div
+        class="progress-fill"
+        id="progressFill">
+      </div>
     </div>
+
   </div>
+
 
   <div class="card">
 
     <div class="day-title">
-      <h2 id="diaTitulo">Dia 1</h2>
-      <span class="date" id="dataAtual"></span>
+
+      <h2 id="diaTitulo">
+        Dia 1
+      </h2>
+
+      <span
+        class="date"
+        id="dataAtual">
+      </span>
+
     </div>
 
+
     <div class="field">
-      <label>🌙 Jejum / ao acordar</label>
+
+      <label>
+        🌙 Jejum / ao acordar
+      </label>
 
       <div class="input-row">
+
         <input
           id="jejum"
           class="value-input"
@@ -300,13 +324,20 @@
           class="time-input"
           type="time"
         >
+
       </div>
+
     </div>
 
+
     <div class="field">
-      <label>☕ Antes do café da manhã</label>
+
+      <label>
+        ☕ Antes do café da manhã
+      </label>
 
       <div class="input-row">
+
         <input
           id="cafe"
           class="value-input"
@@ -320,13 +351,20 @@
           class="time-input"
           type="time"
         >
+
       </div>
+
     </div>
 
+
     <div class="field">
-      <label>🍽️ Antes do almoço</label>
+
+      <label>
+        🍽️ Antes do almoço
+      </label>
 
       <div class="input-row">
+
         <input
           id="almoco"
           class="value-input"
@@ -340,13 +378,20 @@
           class="time-input"
           type="time"
         >
+
       </div>
+
     </div>
 
+
     <div class="field">
-      <label>🌙 Antes do jantar</label>
+
+      <label>
+        🌙 Antes do jantar
+      </label>
 
       <div class="input-row">
+
         <input
           id="jantar"
           class="value-input"
@@ -360,34 +405,54 @@
           class="time-input"
           type="time"
         >
+
       </div>
+
     </div>
 
+
     <div class="field">
-      <label>📝 Observações</label>
+
+      <label>
+        📝 Observações
+      </label>
 
       <textarea
         id="observacoes"
         placeholder="Anote algo importante do dia..."
       ></textarea>
+
     </div>
 
-    <button class="save-button" onclick="salvarRegistro()">
+
+    <button
+      class="save-button"
+      onclick="salvarRegistro()"
+      id="botaoSalvar"
+    >
       Salvar registro
     </button>
 
-    <div class="status" id="status"></div>
+
+    <div
+      class="status"
+      id="status">
+    </div>
 
   </div>
+
 
   <h2 class="history-title">
     Histórico
   </h2>
 
+
   <div id="historico">
+
     <div class="empty">
       Nenhum registro salvo ainda.
     </div>
+
   </div>
 
 </div>
@@ -395,318 +460,904 @@
 
 <script>
 
-  /*
-   * URL DA SUA API
-   */
-  const API_URL =
-    "https://script.google.com/macros/s/AKfycbx-ua_78tMGIbR25K7NlrTs18Gp4cnar8sHaqcnvyNMOy2dnPFBcMlnPUuzX7f7IR_a/exec";
+
+/*
+ * =====================================================
+ * URL DA API
+ * =====================================================
+ */
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbx-ua_78tMGIbR25K7NlrTs18Gp4cnar8sHaqcnvyNMOy2dnPFBcMlnPUuzX7f7IR_a/exec";
 
 
-  /*
-   * Dados locais
-   */
-  let registros =
-    JSON.parse(localStorage.getItem("glicemia10dias")) || [];
+/*
+ * =====================================================
+ * REGISTROS LOCAIS
+ * =====================================================
+ */
+
+let registros =
+  JSON.parse(
+    localStorage.getItem("glicemia10dias")
+  ) || [];
 
 
-  /*
-   * Data atual
-   */
-  function dataHoje() {
+/*
+ * =====================================================
+ * DATA DE HOJE
+ * =====================================================
+ */
 
-    const hoje = new Date();
+function dataHoje() {
 
-    const dia = String(hoje.getDate()).padStart(2, "0");
-    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-    const ano = hoje.getFullYear();
+  const hoje = new Date();
 
-    return `${dia}/${mes}/${ano}`;
+  const dia =
+    String(hoje.getDate())
+      .padStart(2, "0");
+
+  const mes =
+    String(hoje.getMonth() + 1)
+      .padStart(2, "0");
+
+  const ano =
+    hoje.getFullYear();
+
+  return `${dia}/${mes}/${ano}`;
+
+}
+
+
+/*
+ * =====================================================
+ * CONVERTER DATA
+ * =====================================================
+ */
+
+function converterData(data) {
+
+  if (!data) {
+    return null;
   }
 
+  const partes =
+    String(data).split("/");
 
-  /*
-   * ID do registro
-   */
-  function gerarID() {
-
-    return Date.now().toString();
-
+  if (partes.length !== 3) {
+    return null;
   }
 
+  return new Date(
+    Number(partes[2]),
+    Number(partes[1]) - 1,
+    Number(partes[0])
+  );
 
-  /*
-   * Atualiza tela
-   */
-  function atualizarTela() {
+}
 
-    document.getElementById("dataAtual").innerText =
-      dataHoje();
 
-    const quantidade =
-      registros.length > 10 ? 10 : registros.length;
+/*
+ * =====================================================
+ * COMPARAR DATAS
+ * =====================================================
+ */
 
-    document.getElementById("diasPreenchidos").innerText =
-      quantidade;
+function mesmaData(data1, data2) {
 
-    document.getElementById("progressFill").style.width =
-      (quantidade * 10) + "%";
+  return data1 === data2;
 
-    mostrarHistorico();
+}
 
+
+/*
+ * =====================================================
+ * CALCULAR DIA
+ * =====================================================
+ */
+
+function calcularDia(dataInicial, dataAtual) {
+
+  const inicio =
+    converterData(dataInicial);
+
+  const atual =
+    converterData(dataAtual);
+
+  if (!inicio || !atual) {
+    return 1;
   }
 
+  inicio.setHours(0, 0, 0, 0);
+  atual.setHours(0, 0, 0, 0);
 
-  /*
-   * Salvar registro
-   */
-  async function salvarRegistro() {
+  const diferenca =
+    Math.floor(
+      (
+        atual.getTime() -
+        inicio.getTime()
+      ) /
+      (1000 * 60 * 60 * 24)
+    );
 
-    const status =
-      document.getElementById("status");
+  return diferenca + 1;
 
-    const dados = {
-
-      id: gerarID(),
-
-      data: dataHoje(),
-
-      jejum:
-        document.getElementById("jejum").value,
-
-      horarioJejum:
-        document.getElementById("horarioJejum").value,
-
-      cafe:
-        document.getElementById("cafe").value,
-
-      horarioCafe:
-        document.getElementById("horarioCafe").value,
-
-      almoco:
-        document.getElementById("almoco").value,
-
-      horarioAlmoco:
-        document.getElementById("horarioAlmoco").value,
-
-      jantar:
-        document.getElementById("jantar").value,
-
-      horarioJantar:
-        document.getElementById("horarioJantar").value,
-
-      observacoes:
-        document.getElementById("observacoes").value
-
-    };
+}
 
 
-    /*
-     * Verifica se existe pelo menos um valor
-     */
-    if (
-      !dados.jejum &&
-      !dados.cafe &&
-      !dados.almoco &&
-      !dados.jantar
-    ) {
+/*
+ * =====================================================
+ * ORGANIZAR REGISTROS
+ * =====================================================
+ */
 
-      status.innerText =
-        "Preencha pelo menos uma glicemia.";
+function organizarRegistros() {
 
-      status.style.color = "#a85c72";
+  registros.sort(function(a, b) {
 
-      return;
+    const dataA =
+      converterData(a.data);
 
+    const dataB =
+      converterData(b.data);
+
+    if (!dataA || !dataB) {
+      return 0;
     }
 
+    return dataA - dataB;
 
-    status.innerText =
-      "Salvando...";
+  });
 
-    status.style.color = "#8b7a82";
+}
 
 
-    /*
-     * Salva localmente
-     */
-    registros.push(dados);
+/*
+ * =====================================================
+ * ATUALIZAR TELA
+ * =====================================================
+ */
 
-    if (registros.length > 10) {
+function atualizarTela() {
 
-      registros.shift();
+  organizarRegistros();
 
-    }
 
-    localStorage.setItem(
-      "glicemia10dias",
-      JSON.stringify(registros)
+  const hoje =
+    dataHoje();
+
+
+  document.getElementById(
+    "dataAtual"
+  ).innerText = hoje;
+
+
+  let quantidade =
+    registros.length;
+
+
+  if (quantidade > 10) {
+    quantidade = 10;
+  }
+
+
+  document.getElementById(
+    "diasPreenchidos"
+  ).innerText = quantidade;
+
+
+  document.getElementById(
+    "progressFill"
+  ).style.width =
+    (quantidade * 10) + "%";
+
+
+  /*
+   * Descobre qual é o dia atual
+   */
+
+  let diaAtual = 1;
+
+
+  if (registros.length > 0) {
+
+    diaAtual =
+      calcularDia(
+        registros[0].data,
+        hoje
+      );
+
+  }
+
+
+  if (diaAtual < 1) {
+    diaAtual = 1;
+  }
+
+
+  if (diaAtual > 10) {
+    diaAtual = 10;
+  }
+
+
+  document.getElementById(
+    "diaTitulo"
+  ).innerText =
+    "Dia " + diaAtual;
+
+
+  /*
+   * Se já existe registro de hoje,
+   * carrega os valores no formulário.
+   */
+
+  const registroHoje =
+    registros.find(function(registro) {
+
+      return mesmaData(
+        registro.data,
+        hoje
+      );
+
+    });
+
+
+  if (registroHoje) {
+
+    preencherFormulario(
+      registroHoje
+    );
+
+  }
+
+
+  /*
+   * Se já completou 10 dias,
+   * bloqueia o botão.
+   */
+
+  const botao =
+    document.getElementById(
+      "botaoSalvar"
     );
 
 
-    /*
-     * Envia para Google Sheets
-     */
-    try {
+  if (
+    registros.length >= 10 &&
+    !registroHoje
+  ) {
 
-      await fetch(API_URL, {
+    botao.disabled = true;
 
-        method: "POST",
+    botao.style.opacity = "0.6";
 
-        mode: "no-cors",
+    botao.innerText =
+      "Acompanhamento concluído";
 
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        },
+  } else {
 
-        body: JSON.stringify(dados)
+    botao.disabled = false;
 
-      });
+    botao.style.opacity = "1";
 
-      status.innerText =
-        "✓ Registro salvo!";
+    botao.innerText =
+      registroHoje
+        ? "Atualizar registro"
+        : "Salvar registro";
 
-      status.style.color =
-        "#6f9278";
+  }
 
 
-    } catch (erro) {
+  mostrarHistorico();
 
-      status.innerText =
-        "Salvo no aparelho. Verifique a conexão.";
+}
 
-      status.style.color =
-        "#a85c72";
+
+/*
+ * =====================================================
+ * PREENCHER FORMULÁRIO
+ * =====================================================
+ */
+
+function preencherFormulario(registro) {
+
+  document.getElementById(
+    "jejum"
+  ).value =
+    registro.jejum || "";
+
+
+  document.getElementById(
+    "horarioJejum"
+  ).value =
+    registro.horarioJejum || "";
+
+
+  document.getElementById(
+    "cafe"
+  ).value =
+    registro.cafe || "";
+
+
+  document.getElementById(
+    "horarioCafe"
+  ).value =
+    registro.horarioCafe || "";
+
+
+  document.getElementById(
+    "almoco"
+  ).value =
+    registro.almoco || "";
+
+
+  document.getElementById(
+    "horarioAlmoco"
+  ).value =
+    registro.horarioAlmoco || "";
+
+
+  document.getElementById(
+    "jantar"
+  ).value =
+    registro.jantar || "";
+
+
+  document.getElementById(
+    "horarioJantar"
+  ).value =
+    registro.horarioJantar || "";
+
+
+  document.getElementById(
+    "observacoes"
+  ).value =
+    registro.observacoes || "";
+
+}
+
+
+/*
+ * =====================================================
+ * SALVAR REGISTRO
+ * =====================================================
+ */
+
+async function salvarRegistro() {
+
+  const status =
+    document.getElementById(
+      "status"
+    );
+
+
+  const hoje =
+    dataHoje();
+
+
+  /*
+   * Descobre o dia atual
+   */
+
+  let diaAtual = 1;
+
+
+  if (registros.length > 0) {
+
+    diaAtual =
+      calcularDia(
+        registros[0].data,
+        hoje
+      );
+
+  }
+
+
+  if (diaAtual > 10) {
+
+    status.innerText =
+      "Os 10 dias de acompanhamento já foram concluídos.";
+
+    status.style.color =
+      "#a85c72";
+
+    return;
+
+  }
+
+
+  /*
+   * Dados
+   */
+
+  const dados = {
+
+    id:
+      "Dia " + diaAtual,
+
+    data:
+      hoje,
+
+    jejum:
+      document.getElementById(
+        "jejum"
+      ).value,
+
+    horarioJejum:
+      document.getElementById(
+        "horarioJejum"
+      ).value,
+
+    cafe:
+      document.getElementById(
+        "cafe"
+      ).value,
+
+    horarioCafe:
+      document.getElementById(
+        "horarioCafe"
+      ).value,
+
+    almoco:
+      document.getElementById(
+        "almoco"
+      ).value,
+
+    horarioAlmoco:
+      document.getElementById(
+        "horarioAlmoco"
+      ).value,
+
+    jantar:
+      document.getElementById(
+        "jantar"
+      ).value,
+
+    horarioJantar:
+      document.getElementById(
+        "horarioJantar"
+      ).value,
+
+    observacoes:
+      document.getElementById(
+        "observacoes"
+      ).value
+
+  };
+
+
+  /*
+   * Verifica se existe pelo menos
+   * uma glicemia
+   */
+
+  if (
+    !dados.jejum &&
+    !dados.cafe &&
+    !dados.almoco &&
+    !dados.jantar
+  ) {
+
+    status.innerText =
+      "Preencha pelo menos uma glicemia.";
+
+    status.style.color =
+      "#a85c72";
+
+    return;
+
+  }
+
+
+  status.innerText =
+    "Salvando...";
+
+  status.style.color =
+    "#8b7a82";
+
+
+  /*
+   * ===================================================
+   * ATUALIZA LOCALMENTE
+   * ===================================================
+   */
+
+  const indiceExistente =
+    registros.findIndex(function(registro) {
+
+      return mesmaData(
+        registro.data,
+        hoje
+      );
+
+    });
+
+
+  if (indiceExistente !== -1) {
+
+    registros[indiceExistente] =
+      dados;
+
+  } else {
+
+    registros.push(dados);
+
+  }
+
+
+  organizarRegistros();
+
+
+  /*
+   * Mantém somente os 10 dias
+   */
+
+  if (registros.length > 10) {
+
+    registros =
+      registros.slice(0, 10);
+
+  }
+
+
+  localStorage.setItem(
+    "glicemia10dias",
+    JSON.stringify(registros)
+  );
+
+
+  /*
+   * ===================================================
+   * ENVIA PARA GOOGLE SHEETS
+   * ===================================================
+   */
+
+  try {
+
+    await fetch(API_URL, {
+
+      method: "POST",
+
+      mode: "no-cors",
+
+      headers: {
+
+        "Content-Type":
+          "text/plain;charset=utf-8"
+
+      },
+
+      body:
+        JSON.stringify(dados)
+
+    });
+
+
+    status.innerText =
+      indiceExistente !== -1
+        ? "✓ Registro atualizado!"
+        : "✓ Registro salvo!";
+
+
+    status.style.color =
+      "#6f9278";
+
+
+  } catch (erro) {
+
+    status.innerText =
+      "Salvo no aparelho. Verifique a conexão.";
+
+    status.style.color =
+      "#a85c72";
+
+  }
+
+
+  atualizarTela();
+
+}
+
+
+/*
+ * =====================================================
+ * LIMPAR CAMPOS
+ * =====================================================
+ */
+
+function limparCampos() {
+
+  document.getElementById(
+    "jejum"
+  ).value = "";
+
+  document.getElementById(
+    "horarioJejum"
+  ).value = "";
+
+  document.getElementById(
+    "cafe"
+  ).value = "";
+
+  document.getElementById(
+    "horarioCafe"
+  ).value = "";
+
+  document.getElementById(
+    "almoco"
+  ).value = "";
+
+  document.getElementById(
+    "horarioAlmoco"
+  ).value = "";
+
+  document.getElementById(
+    "jantar"
+  ).value = "";
+
+  document.getElementById(
+    "horarioJantar"
+  ).value = "";
+
+  document.getElementById(
+    "observacoes"
+  ).value = "";
+
+}
+
+
+/*
+ * =====================================================
+ * HISTÓRICO
+ * =====================================================
+ */
+
+function mostrarHistorico() {
+
+  const container =
+    document.getElementById(
+      "historico"
+    );
+
+
+  if (registros.length === 0) {
+
+    container.innerHTML =
+      '<div class="empty">Nenhum registro salvo ainda.</div>';
+
+    return;
+
+  }
+
+
+  container.innerHTML = "";
+
+
+  registros
+    .slice()
+    .reverse()
+    .forEach(function(registro) {
+
+
+      const numeroDia =
+        calcularDia(
+          registros[0].data,
+          registro.data
+        );
+
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.className =
+        "history-item";
+
+
+      item.innerHTML = `
+
+        <div class="history-header">
+
+          <span class="history-day">
+            Dia ${numeroDia}
+          </span>
+
+          <span class="history-date">
+            ${registro.data}
+          </span>
+
+        </div>
+
+
+        <div class="values">
+
+          <div class="value-box">
+
+            Jejum
+
+            <strong>
+              ${registro.jejum || "—"}
+            </strong>
+
+          </div>
+
+
+          <div class="value-box">
+
+            Café
+
+            <strong>
+              ${registro.cafe || "—"}
+            </strong>
+
+          </div>
+
+
+          <div class="value-box">
+
+            Almoço
+
+            <strong>
+              ${registro.almoco || "—"}
+            </strong>
+
+          </div>
+
+
+          <div class="value-box">
+
+            Jantar
+
+            <strong>
+              ${registro.jantar || "—"}
+            </strong>
+
+          </div>
+
+        </div>
+
+      `;
+
+
+      container.appendChild(
+        item
+      );
+
+    });
+
+}
+
+
+/*
+ * =====================================================
+ * CARREGAR REGISTROS DO GOOGLE SHEETS
+ * =====================================================
+ */
+
+async function carregarRegistros() {
+
+  try {
+
+    const resposta =
+      await fetch(
+        API_URL
+      );
+
+
+    const dados =
+      await resposta.json();
+
+
+    if (
+      dados &&
+      dados.sucesso &&
+      Array.isArray(
+        dados.registros
+      )
+    ) {
+
+      /*
+       * Usa os dados da planilha
+       */
+
+      registros =
+        dados.registros
+          .filter(function(registro) {
+
+            return registro.data;
+
+          })
+          .map(function(registro) {
+
+            return {
+
+              id:
+                registro.id || "",
+
+              data:
+                registro.data || "",
+
+              jejum:
+                registro.jejum || "",
+
+              horarioJejum:
+                registro.horarioJejum || "",
+
+              cafe:
+                registro.cafe || "",
+
+              horarioCafe:
+                registro.horarioCafe || "",
+
+              almoco:
+                registro.almoco || "",
+
+              horarioAlmoco:
+                registro.horarioAlmoco || "",
+
+              jantar:
+                registro.jantar || "",
+
+              horarioJantar:
+                registro.horarioJantar || "",
+
+              observacoes:
+                registro.observacoes || ""
+
+            };
+
+          });
+
+
+      organizarRegistros();
+
+
+      /*
+       * Mantém somente os 10 dias
+       */
+
+      registros =
+        registros.slice(0, 10);
+
+
+      localStorage.setItem(
+        "glicemia10dias",
+        JSON.stringify(registros)
+      );
+
+
+      atualizarTela();
 
     }
 
 
-    limparCampos();
+  } catch (erro) {
+
+    /*
+     * Se não conseguir acessar
+     * a planilha, continua usando
+     * os dados locais.
+     */
 
     atualizarTela();
 
   }
 
-
-  /*
-   * Limpa formulário
-   */
-  function limparCampos() {
-
-    document.getElementById("jejum").value = "";
-    document.getElementById("horarioJejum").value = "";
-
-    document.getElementById("cafe").value = "";
-    document.getElementById("horarioCafe").value = "";
-
-    document.getElementById("almoco").value = "";
-    document.getElementById("horarioAlmoco").value = "";
-
-    document.getElementById("jantar").value = "";
-    document.getElementById("horarioJantar").value = "";
-
-    document.getElementById("observacoes").value = "";
-
-  }
+}
 
 
-  /*
-   * Histórico
-   */
-  function mostrarHistorico() {
+/*
+ * =====================================================
+ * INICIALIZAÇÃO
+ * =====================================================
+ */
 
-    const container =
-      document.getElementById("historico");
+atualizarTela();
 
+carregarRegistros();
 
-    if (registros.length === 0) {
-
-      container.innerHTML =
-        '<div class="empty">Nenhum registro salvo ainda.</div>';
-
-      return;
-
-    }
-
-
-    container.innerHTML = "";
-
-
-    registros
-      .slice()
-      .reverse()
-      .forEach(function(registro, index) {
-
-        const numeroDia =
-          registros.length - index;
-
-
-        const item =
-          document.createElement("div");
-
-        item.className =
-          "history-item";
-
-
-        item.innerHTML = `
-
-          <div class="history-header">
-
-            <span class="history-day">
-              Dia ${numeroDia}
-            </span>
-
-            <span class="history-date">
-              ${registro.data}
-            </span>
-
-          </div>
-
-          <div class="values">
-
-            <div class="value-box">
-              Jejum
-              <strong>
-                ${registro.jejum || "—"}
-              </strong>
-            </div>
-
-            <div class="value-box">
-              Café
-              <strong>
-                ${registro.cafe || "—"}
-              </strong>
-            </div>
-
-            <div class="value-box">
-              Almoço
-              <strong>
-                ${registro.almoco || "—"}
-              </strong>
-            </div>
-
-            <div class="value-box">
-              Jantar
-              <strong>
-                ${registro.jantar || "—"}
-              </strong>
-            </div>
-
-          </div>
-
-        `;
-
-
-        container.appendChild(item);
-
-      });
-
-  }
-
-
-  /*
-   * Inicialização
-   */
-  atualizarTela();
 
 </script>
 
