@@ -26,6 +26,112 @@
       padding: 20px 16px 40px;
     }
 
+    /* =====================================================
+       TELA DE LEMBRETE
+       ===================================================== */
+
+    .lembrete-tela {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #fff8fb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lembrete-tela.oculta {
+      display: none;
+    }
+
+    .lembrete-card {
+      width: 100%;
+      max-width: 430px;
+      background: white;
+      border-radius: 28px;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(120, 80, 100, 0.12);
+    }
+
+    .lembrete-coracao {
+      font-size: 48px;
+      color: #b97892;
+      margin-bottom: 18px;
+    }
+
+    .lembrete-card h2 {
+      color: #8f596f;
+      font-size: 25px;
+      margin-bottom: 10px;
+    }
+
+    .lembrete-card p {
+      color: #8b7a82;
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+
+    .lembrete-horario {
+      width: 100%;
+      border: 1px solid #ead9df;
+      border-radius: 14px;
+      padding: 15px;
+      font-size: 22px;
+      text-align: center;
+      background: #fffafd;
+      color: #4b3f46;
+      outline: none;
+      margin-bottom: 16px;
+    }
+
+    .lembrete-horario:focus {
+      border-color: #c98fa7;
+    }
+
+    .lembrete-botao {
+      width: 100%;
+      border: none;
+      border-radius: 15px;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #b97892;
+      color: white;
+    }
+
+    .lembrete-botao:active {
+      transform: scale(0.98);
+    }
+
+    .lembrete-status {
+      min-height: 20px;
+      margin-top: 13px;
+      font-size: 13px;
+      color: #8b7a82;
+    }
+
+    .alterar-lembrete {
+      display: none;
+      margin: 0 auto 18px;
+      width: auto;
+      background: transparent;
+      color: #9b6178;
+      padding: 5px 10px;
+      font-size: 13px;
+    }
+
+    .alterar-lembrete.visivel {
+      display: block;
+    }
+
+    /* =====================================================
+       APP
+       ===================================================== */
+
     header {
       text-align: center;
       padding: 20px 10px 25px;
@@ -248,22 +354,89 @@
       h1 {
         font-size: 23px;
       }
+
+      .lembrete-card {
+        padding: 28px 20px;
+      }
     }
   </style>
 </head>
 
 <body>
 
+<!-- =====================================================
+     TELA INICIAL DO LEMBRETE
+     ===================================================== -->
+
+<div
+  id="telaLembrete"
+  class="lembrete-tela"
+>
+
+  <div class="lembrete-card">
+
+    <div class="lembrete-coracao">
+      ♡
+    </div>
+
+    <h2>
+      Quando você quer ser lembrada?
+    </h2>
+
+    <p>
+      Escolha um horário para receber seu
+      lembrete diário para registrar a glicemia.
+    </p>
+
+    <input
+      type="time"
+      id="horarioLembrete"
+      class="lembrete-horario"
+      value="07:00"
+    >
+
+    <button
+      id="botaoAtivarLembrete"
+      class="lembrete-botao"
+      onclick="ativarLembrete()"
+    >
+      🔔 Ativar lembrete
+    </button>
+
+    <div
+      id="statusLembrete"
+      class="lembrete-status"
+    ></div>
+
+  </div>
+
+</div>
+
+
 <div class="app">
 
   <header>
-    <div class="heart">♡</div>
 
-    <h1>Meu acompanhamento</h1>
+    <div class="heart">
+      ♡
+    </div>
+
+    <h1>
+      Meu acompanhamento
+    </h1>
 
     <p class="subtitle">
       Registro diário da glicemia
     </p>
+
+    <button
+      id="botaoAlterarLembrete"
+      class="alterar-lembrete"
+      onclick="mostrarConfiguracaoLembrete()"
+    >
+      🔔 Alterar horário do lembrete
+    </button>
+
   </header>
 
 
@@ -460,22 +633,17 @@
 
 <script>
 
-
-/*
- * =====================================================
- * URL DA API
- * =====================================================
- */
+/* =====================================================
+   URL DA API
+   ===================================================== */
 
 const API_URL =
   "https://script.google.com/macros/s/AKfycbx-ua_78tMGIbR25K7NlrTs18Gp4cnar8sHaqcnvyNMOy2dnPFBcMlnPUuzX7f7IR_a/exec";
 
 
-/*
- * =====================================================
- * REGISTROS LOCAIS
- * =====================================================
- */
+/* =====================================================
+   REGISTROS LOCAIS
+   ===================================================== */
 
 let registros =
   JSON.parse(
@@ -483,11 +651,9 @@ let registros =
   ) || [];
 
 
-/*
- * =====================================================
- * DATA DE HOJE
- * =====================================================
- */
+/* =====================================================
+   DATA DE HOJE
+   ===================================================== */
 
 function dataHoje() {
 
@@ -509,11 +675,9 @@ function dataHoje() {
 }
 
 
-/*
- * =====================================================
- * CONVERTER DATA
- * =====================================================
- */
+/* =====================================================
+   CONVERTER DATA
+   ===================================================== */
 
 function converterData(data) {
 
@@ -537,11 +701,9 @@ function converterData(data) {
 }
 
 
-/*
- * =====================================================
- * COMPARAR DATAS
- * =====================================================
- */
+/* =====================================================
+   COMPARAR DATAS
+   ===================================================== */
 
 function mesmaData(data1, data2) {
 
@@ -550,11 +712,9 @@ function mesmaData(data1, data2) {
 }
 
 
-/*
- * =====================================================
- * CALCULAR DIA
- * =====================================================
- */
+/* =====================================================
+   CALCULAR DIA
+   ===================================================== */
 
 function calcularDia(dataInicial, dataAtual) {
 
@@ -585,11 +745,9 @@ function calcularDia(dataInicial, dataAtual) {
 }
 
 
-/*
- * =====================================================
- * ORGANIZAR REGISTROS
- * =====================================================
- */
+/* =====================================================
+   ORGANIZAR REGISTROS
+   ===================================================== */
 
 function organizarRegistros() {
 
@@ -612,39 +770,31 @@ function organizarRegistros() {
 }
 
 
-/*
- * =====================================================
- * ATUALIZAR TELA
- * =====================================================
- */
+/* =====================================================
+   ATUALIZAR TELA
+   ===================================================== */
 
 function atualizarTela() {
 
   organizarRegistros();
 
-
   const hoje =
     dataHoje();
-
 
   document.getElementById(
     "dataAtual"
   ).innerText = hoje;
 
-
   let quantidade =
     registros.length;
-
 
   if (quantidade > 10) {
     quantidade = 10;
   }
 
-
   document.getElementById(
     "diasPreenchidos"
   ).innerText = quantidade;
-
 
   document.getElementById(
     "progressFill"
@@ -652,12 +802,7 @@ function atualizarTela() {
     (quantidade * 10) + "%";
 
 
-  /*
-   * Descobre qual é o dia atual
-   */
-
   let diaAtual = 1;
-
 
   if (registros.length > 0) {
 
@@ -669,27 +814,19 @@ function atualizarTela() {
 
   }
 
-
   if (diaAtual < 1) {
     diaAtual = 1;
   }
 
-
   if (diaAtual > 10) {
     diaAtual = 10;
   }
-
 
   document.getElementById(
     "diaTitulo"
   ).innerText =
     "Dia " + diaAtual;
 
-
-  /*
-   * Se já existe registro de hoje,
-   * carrega os valores no formulário.
-   */
 
   const registroHoje =
     registros.find(function(registro) {
@@ -710,11 +847,6 @@ function atualizarTela() {
 
   }
 
-
-  /*
-   * Se já completou 10 dias,
-   * bloqueia o botão.
-   */
 
   const botao =
     document.getElementById(
@@ -747,17 +879,14 @@ function atualizarTela() {
 
   }
 
-
   mostrarHistorico();
 
 }
 
 
-/*
- * =====================================================
- * PREENCHER FORMULÁRIO
- * =====================================================
- */
+/* =====================================================
+   PREENCHER FORMULÁRIO
+   ===================================================== */
 
 function preencherFormulario(registro) {
 
@@ -766,48 +895,40 @@ function preencherFormulario(registro) {
   ).value =
     registro.jejum || "";
 
-
   document.getElementById(
     "horarioJejum"
   ).value =
     registro.horarioJejum || "";
-
 
   document.getElementById(
     "cafe"
   ).value =
     registro.cafe || "";
 
-
   document.getElementById(
     "horarioCafe"
   ).value =
     registro.horarioCafe || "";
-
 
   document.getElementById(
     "almoco"
   ).value =
     registro.almoco || "";
 
-
   document.getElementById(
     "horarioAlmoco"
   ).value =
     registro.horarioAlmoco || "";
-
 
   document.getElementById(
     "jantar"
   ).value =
     registro.jantar || "";
 
-
   document.getElementById(
     "horarioJantar"
   ).value =
     registro.horarioJantar || "";
-
 
   document.getElementById(
     "observacoes"
@@ -817,11 +938,9 @@ function preencherFormulario(registro) {
 }
 
 
-/*
- * =====================================================
- * SALVAR REGISTRO
- * =====================================================
- */
+/* =====================================================
+   SALVAR REGISTRO
+   ===================================================== */
 
 async function salvarRegistro() {
 
@@ -830,17 +949,10 @@ async function salvarRegistro() {
       "status"
     );
 
-
   const hoje =
     dataHoje();
 
-
-  /*
-   * Descobre o dia atual
-   */
-
   let diaAtual = 1;
-
 
   if (registros.length > 0) {
 
@@ -851,7 +963,6 @@ async function salvarRegistro() {
       );
 
   }
-
 
   if (diaAtual > 10) {
 
@@ -865,10 +976,6 @@ async function salvarRegistro() {
 
   }
 
-
-  /*
-   * Dados
-   */
 
   const dados = {
 
@@ -926,11 +1033,6 @@ async function salvarRegistro() {
   };
 
 
-  /*
-   * Verifica se existe pelo menos
-   * uma glicemia
-   */
-
   if (
     !dados.jejum &&
     !dados.cafe &&
@@ -955,12 +1057,6 @@ async function salvarRegistro() {
   status.style.color =
     "#8b7a82";
 
-
-  /*
-   * ===================================================
-   * ATUALIZA LOCALMENTE
-   * ===================================================
-   */
 
   const indiceExistente =
     registros.findIndex(function(registro) {
@@ -988,10 +1084,6 @@ async function salvarRegistro() {
   organizarRegistros();
 
 
-  /*
-   * Mantém somente os 10 dias
-   */
-
   if (registros.length > 10) {
 
     registros =
@@ -1005,12 +1097,6 @@ async function salvarRegistro() {
     JSON.stringify(registros)
   );
 
-
-  /*
-   * ===================================================
-   * ENVIA PARA GOOGLE SHEETS
-   * ===================================================
-   */
 
   try {
 
@@ -1038,7 +1124,6 @@ async function salvarRegistro() {
         ? "✓ Registro atualizado!"
         : "✓ Registro salvo!";
 
-
     status.style.color =
       "#6f9278";
 
@@ -1059,58 +1144,9 @@ async function salvarRegistro() {
 }
 
 
-/*
- * =====================================================
- * LIMPAR CAMPOS
- * =====================================================
- */
-
-function limparCampos() {
-
-  document.getElementById(
-    "jejum"
-  ).value = "";
-
-  document.getElementById(
-    "horarioJejum"
-  ).value = "";
-
-  document.getElementById(
-    "cafe"
-  ).value = "";
-
-  document.getElementById(
-    "horarioCafe"
-  ).value = "";
-
-  document.getElementById(
-    "almoco"
-  ).value = "";
-
-  document.getElementById(
-    "horarioAlmoco"
-  ).value = "";
-
-  document.getElementById(
-    "jantar"
-  ).value = "";
-
-  document.getElementById(
-    "horarioJantar"
-  ).value = "";
-
-  document.getElementById(
-    "observacoes"
-  ).value = "";
-
-}
-
-
-/*
- * =====================================================
- * HISTÓRICO
- * =====================================================
- */
+/* =====================================================
+   HISTÓRICO
+   ===================================================== */
 
 function mostrarHistorico() {
 
@@ -1137,7 +1173,6 @@ function mostrarHistorico() {
     .slice()
     .reverse()
     .forEach(function(registro) {
-
 
       const numeroDia =
         calcularDia(
@@ -1170,50 +1205,34 @@ function mostrarHistorico() {
 
         </div>
 
-
         <div class="values">
 
           <div class="value-box">
-
             Jejum
-
             <strong>
               ${registro.jejum || "—"}
             </strong>
-
           </div>
 
-
           <div class="value-box">
-
             Café
-
             <strong>
               ${registro.cafe || "—"}
             </strong>
-
           </div>
 
-
           <div class="value-box">
-
             Almoço
-
             <strong>
               ${registro.almoco || "—"}
             </strong>
-
           </div>
 
-
           <div class="value-box">
-
             Jantar
-
             <strong>
               ${registro.jantar || "—"}
             </strong>
-
           </div>
 
         </div>
@@ -1230,11 +1249,9 @@ function mostrarHistorico() {
 }
 
 
-/*
- * =====================================================
- * CARREGAR REGISTROS DO GOOGLE SHEETS
- * =====================================================
- */
+/* =====================================================
+   CARREGAR REGISTROS DO GOOGLE SHEETS
+   ===================================================== */
 
 async function carregarRegistros() {
 
@@ -1257,10 +1274,6 @@ async function carregarRegistros() {
         dados.registros
       )
     ) {
-
-      /*
-       * Usa os dados da planilha
-       */
 
       registros =
         dados.registros
@@ -1313,11 +1326,6 @@ async function carregarRegistros() {
 
       organizarRegistros();
 
-
-      /*
-       * Mantém somente os 10 dias
-       */
-
       registros =
         registros.slice(0, 10);
 
@@ -1335,12 +1343,6 @@ async function carregarRegistros() {
 
   } catch (erro) {
 
-    /*
-     * Se não conseguir acessar
-     * a planilha, continua usando
-     * os dados locais.
-     */
-
     atualizarTela();
 
   }
@@ -1348,16 +1350,372 @@ async function carregarRegistros() {
 }
 
 
+/* =====================================================
+   LEMBRETES
+   ===================================================== */
+
+let timerLembrete = null;
+
+
 /*
- * =====================================================
- * INICIALIZAÇÃO
- * =====================================================
+ * Mostra a configuração inicial
+ * somente se ainda não houver
+ * um horário salvo.
  */
+
+function verificarConfiguracaoLembrete() {
+
+  const horario =
+    localStorage.getItem(
+      "horarioLembreteGlicemia"
+    );
+
+
+  const tela =
+    document.getElementById(
+      "telaLembrete"
+    );
+
+
+  const botaoAlterar =
+    document.getElementById(
+      "botaoAlterarLembrete"
+    );
+
+
+  if (!horario) {
+
+    tela.classList.remove(
+      "oculta"
+    );
+
+    botaoAlterar.classList.remove(
+      "visivel"
+    );
+
+  } else {
+
+    tela.classList.add(
+      "oculta"
+    );
+
+    botaoAlterar.classList.add(
+      "visivel"
+    );
+
+    iniciarLembrete(
+      horario
+    );
+
+  }
+
+}
+
+
+/*
+ * Ativa o lembrete
+ */
+
+async function ativarLembrete() {
+
+  const campo =
+    document.getElementById(
+      "horarioLembrete"
+    );
+
+  const horario =
+    campo.value;
+
+
+  const status =
+    document.getElementById(
+      "statusLembrete"
+    );
+
+
+  if (!horario) {
+
+    status.innerText =
+      "Escolha um horário.";
+
+    return;
+
+  }
+
+
+  /*
+   * Solicita permissão para
+   * notificações do navegador.
+   */
+
+  if (
+    "Notification" in window
+  ) {
+
+    if (
+      Notification.permission ===
+      "default"
+    ) {
+
+      try {
+
+        await Notification.requestPermission();
+
+      } catch (erro) {
+
+        console.log(
+          "Permissão não disponível."
+        );
+
+      }
+
+    }
+
+  }
+
+
+  localStorage.setItem(
+    "horarioLembreteGlicemia",
+    horario
+  );
+
+
+  document.getElementById(
+    "telaLembrete"
+  ).classList.add(
+    "oculta"
+  );
+
+
+  document.getElementById(
+    "botaoAlterarLembrete"
+  ).classList.add(
+    "visivel"
+  );
+
+
+  iniciarLembrete(
+    horario
+  );
+
+
+  /*
+   * Confirmação
+   */
+
+  if (
+    "Notification" in window &&
+    Notification.permission === "granted"
+  ) {
+
+    try {
+
+      new Notification(
+        "Lembrete configurado 💗",
+        {
+          body:
+            "Todos os dias às " +
+            horario +
+            " vamos lembrar você de registrar sua glicemia."
+        }
+      );
+
+    } catch (erro) {}
+
+  }
+
+}
+
+
+/*
+ * Permite alterar o horário
+ */
+
+function mostrarConfiguracaoLembrete() {
+
+  const horario =
+    localStorage.getItem(
+      "horarioLembreteGlicemia"
+    ) || "07:00";
+
+
+  document.getElementById(
+    "horarioLembrete"
+  ).value =
+    horario;
+
+
+  document.getElementById(
+    "statusLembrete"
+  ).innerText =
+    "";
+
+
+  document.getElementById(
+    "telaLembrete"
+  ).classList.remove(
+    "oculta"
+  );
+
+}
+
+
+/*
+ * Agenda o próximo lembrete
+ */
+
+function iniciarLembrete(horario) {
+
+  if (timerLembrete) {
+
+    clearTimeout(
+      timerLembrete
+    );
+
+  }
+
+
+  const partes =
+    horario.split(":");
+
+
+  if (partes.length !== 2) {
+    return;
+  }
+
+
+  const hora =
+    Number(partes[0]);
+
+  const minuto =
+    Number(partes[1]);
+
+
+  if (
+    isNaN(hora) ||
+    isNaN(minuto)
+  ) {
+    return;
+  }
+
+
+  const agora =
+    new Date();
+
+
+  const proximo =
+    new Date();
+
+
+  proximo.setHours(
+    hora,
+    minuto,
+    0,
+    0
+  );
+
+
+  /*
+   * Se o horário já passou hoje,
+   * agenda para amanhã.
+   */
+
+  if (
+    proximo.getTime() <=
+    agora.getTime()
+  ) {
+
+    proximo.setDate(
+      proximo.getDate() + 1
+    );
+
+  }
+
+
+  const tempo =
+    proximo.getTime() -
+    agora.getTime();
+
+
+  timerLembrete =
+    setTimeout(
+      function() {
+
+        mostrarNotificacao();
+
+        /*
+         * Agenda novamente para
+         * o dia seguinte.
+         */
+
+        iniciarLembrete(
+          horario
+        );
+
+      },
+      tempo
+    );
+
+}
+
+
+/*
+ * Mostra a notificação
+ */
+
+function mostrarNotificacao() {
+
+  const titulo =
+    "Hora da glicemia 💗";
+
+  const mensagem =
+    "Não se esqueça de registrar sua glicemia de hoje.";
+
+
+  if (
+    "Notification" in window &&
+    Notification.permission === "granted"
+  ) {
+
+    try {
+
+      new Notification(
+        titulo,
+        {
+          body: mensagem
+        }
+      );
+
+      return;
+
+    } catch (erro) {}
+
+  }
+
+
+  /*
+   * Fallback caso notificações
+   * não estejam disponíveis.
+   */
+
+  alert(
+    titulo +
+    "\n\n" +
+    mensagem
+  );
+
+}
+
+
+/* =====================================================
+   INICIALIZAÇÃO
+   ===================================================== */
 
 atualizarTela();
 
 carregarRegistros();
 
+verificarConfiguracaoLembrete();
 
 </script>
 
