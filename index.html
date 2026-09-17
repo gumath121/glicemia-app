@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <head>
 
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#b97892">
@@ -11,12 +11,24 @@
 
   <title>Glicemia • Meu acompanhamento</title>
 
+
+  <!-- =====================================================
+       FIREBASE
+       ===================================================== -->
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+
+
   <style>
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
 
     body {
       font-family: Arial, sans-serif;
@@ -25,11 +37,13 @@
       min-height: 100vh;
     }
 
+
     .app {
       max-width: 600px;
       margin: auto;
       padding: 20px 16px 40px;
     }
+
 
     /* =====================================================
        TELA DE LEMBRETE
@@ -46,9 +60,11 @@
       padding: 20px;
     }
 
+
     .lembrete-tela.oculta {
       display: none;
     }
+
 
     .lembrete-card {
       width: 100%;
@@ -60,11 +76,13 @@
       box-shadow: 0 8px 30px rgba(120, 80, 100, 0.12);
     }
 
+
     .lembrete-coracao {
       font-size: 48px;
       color: #b97892;
       margin-bottom: 18px;
     }
+
 
     .lembrete-card h2 {
       color: #8f596f;
@@ -72,12 +90,14 @@
       margin-bottom: 10px;
     }
 
+
     .lembrete-card p {
       color: #8b7a82;
       font-size: 15px;
       line-height: 1.5;
       margin-bottom: 25px;
     }
+
 
     .lembrete-horario {
       width: 100%;
@@ -92,9 +112,11 @@
       margin-bottom: 16px;
     }
 
+
     .lembrete-horario:focus {
       border-color: #c98fa7;
     }
+
 
     .lembrete-botao {
       width: 100%;
@@ -108,9 +130,11 @@
       color: white;
     }
 
+
     .lembrete-botao:active {
       transform: scale(0.98);
     }
+
 
     .lembrete-status {
       min-height: 20px;
@@ -118,6 +142,7 @@
       font-size: 13px;
       color: #8b7a82;
     }
+
 
     .alterar-lembrete {
       display: none;
@@ -129,9 +154,11 @@
       font-size: 13px;
     }
 
+
     .alterar-lembrete.visivel {
       display: block;
     }
+
 
     /* =====================================================
        APP
@@ -142,10 +169,12 @@
       padding: 20px 10px 25px;
     }
 
+
     .heart {
       font-size: 38px;
       margin-bottom: 8px;
     }
+
 
     h1 {
       font-size: 26px;
@@ -153,10 +182,12 @@
       margin-bottom: 6px;
     }
 
+
     .subtitle {
       font-size: 14px;
       color: #8b7a82;
     }
+
 
     .progress-box {
       background: white;
@@ -166,17 +197,20 @@
       margin-bottom: 20px;
     }
 
+
     .progress-title {
       font-size: 14px;
       color: #8b7a82;
       margin-bottom: 10px;
     }
 
+
     .progress-number {
       font-size: 30px;
       font-weight: bold;
       color: #9b6178;
     }
+
 
     .progress-bar {
       width: 100%;
@@ -187,6 +221,7 @@
       margin-top: 12px;
     }
 
+
     .progress-fill {
       height: 100%;
       width: 0%;
@@ -194,6 +229,7 @@
       border-radius: 20px;
       transition: 0.3s;
     }
+
 
     .card {
       background: white;
@@ -203,6 +239,7 @@
       box-shadow: 0 5px 20px rgba(120, 80, 100, 0.08);
     }
 
+
     .day-title {
       display: flex;
       justify-content: space-between;
@@ -210,19 +247,23 @@
       margin-bottom: 18px;
     }
 
+
     .day-title h2 {
       color: #8f596f;
       font-size: 20px;
     }
+
 
     .date {
       font-size: 13px;
       color: #9b8991;
     }
 
+
     .field {
       margin-bottom: 16px;
     }
+
 
     label {
       display: block;
@@ -232,10 +273,12 @@
       color: #6f5c65;
     }
 
+
     .input-row {
       display: flex;
       gap: 8px;
     }
+
 
     input,
     textarea {
@@ -249,23 +292,28 @@
       color: #4b3f46;
     }
 
+
     input:focus,
     textarea:focus {
       border-color: #c98fa7;
     }
 
+
     .value-input {
       flex: 1;
     }
+
 
     .time-input {
       width: 115px;
     }
 
+
     textarea {
       min-height: 80px;
       resize: vertical;
     }
+
 
     button {
       width: 100%;
@@ -277,15 +325,18 @@
       cursor: pointer;
     }
 
+
     .save-button {
       background: #b97892;
       color: white;
       margin-top: 5px;
     }
 
+
     .save-button:active {
       transform: scale(0.98);
     }
+
 
     .status {
       text-align: center;
@@ -294,11 +345,13 @@
       min-height: 20px;
     }
 
+
     .history-title {
       font-size: 21px;
       color: #8f596f;
       margin: 28px 0 14px;
     }
+
 
     .history-item {
       background: white;
@@ -308,27 +361,32 @@
       box-shadow: 0 4px 15px rgba(120, 80, 100, 0.06);
     }
 
+
     .history-header {
       display: flex;
       justify-content: space-between;
       margin-bottom: 10px;
     }
 
+
     .history-day {
       font-weight: bold;
       color: #8f596f;
     }
+
 
     .history-date {
       color: #9b8991;
       font-size: 13px;
     }
 
+
     .values {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
+
 
     .value-box {
       background: #fff7fa;
@@ -337,12 +395,14 @@
       font-size: 13px;
     }
 
+
     .value-box strong {
       display: block;
       font-size: 16px;
       color: #7d5967;
       margin-top: 3px;
     }
+
 
     .empty {
       text-align: center;
@@ -351,7 +411,9 @@
       padding: 20px;
     }
 
+
     @media (max-width: 400px) {
+
       .time-input {
         width: 100px;
       }
@@ -363,11 +425,16 @@
       .lembrete-card {
         padding: 28px 20px;
       }
+
     }
+
   </style>
+
 </head>
 
+
 <body>
+
 
 <!-- =====================================================
      TELA INICIAL DO LEMBRETE
@@ -384,14 +451,17 @@
       ♡
     </div>
 
+
     <h2>
       Quando você quer ser lembrada?
     </h2>
+
 
     <p>
       Escolha um horário para receber seu
       lembrete diário para registrar a glicemia.
     </p>
+
 
     <input
       type="time"
@@ -400,6 +470,7 @@
       value="07:00"
     >
 
+
     <button
       id="botaoAtivarLembrete"
       class="lembrete-botao"
@@ -407,6 +478,7 @@
     >
       🔔 Ativar lembrete
     </button>
+
 
     <div
       id="statusLembrete"
@@ -418,7 +490,9 @@
 </div>
 
 
+
 <div class="app">
+
 
   <header>
 
@@ -426,13 +500,16 @@
       ♡
     </div>
 
+
     <h1>
       Meu acompanhamento
     </h1>
 
+
     <p class="subtitle">
       Registro diário da glicemia
     </p>
+
 
     <button
       id="botaoAlterarLembrete"
@@ -445,33 +522,45 @@
   </header>
 
 
+
   <div class="progress-box">
 
     <div class="progress-title">
       Progresso do acompanhamento
     </div>
 
+
     <div class="progress-number">
-      <span id="diasPreenchidos">0</span>/10 dias
+
+      <span id="diasPreenchidos">
+        0
+      </span>/10 dias
+
     </div>
 
+
     <div class="progress-bar">
+
       <div
         class="progress-fill"
         id="progressFill">
       </div>
+
     </div>
 
   </div>
 
 
+
   <div class="card">
+
 
     <div class="day-title">
 
       <h2 id="diaTitulo">
         Dia 1
       </h2>
+
 
       <span
         class="date"
@@ -481,11 +570,13 @@
     </div>
 
 
+
     <div class="field">
 
       <label>
         🌙 Jejum / ao acordar
       </label>
+
 
       <div class="input-row">
 
@@ -496,6 +587,7 @@
           placeholder="Glicemia"
           inputmode="decimal"
         >
+
 
         <input
           id="horarioJejum"
@@ -508,11 +600,13 @@
     </div>
 
 
+
     <div class="field">
 
       <label>
         ☕ Antes do café da manhã
       </label>
+
 
       <div class="input-row">
 
@@ -523,6 +617,7 @@
           placeholder="Glicemia"
           inputmode="decimal"
         >
+
 
         <input
           id="horarioCafe"
@@ -535,11 +630,13 @@
     </div>
 
 
+
     <div class="field">
 
       <label>
         🍽️ Antes do almoço
       </label>
+
 
       <div class="input-row">
 
@@ -550,6 +647,7 @@
           placeholder="Glicemia"
           inputmode="decimal"
         >
+
 
         <input
           id="horarioAlmoco"
@@ -562,11 +660,13 @@
     </div>
 
 
+
     <div class="field">
 
       <label>
         🌙 Antes do jantar
       </label>
+
 
       <div class="input-row">
 
@@ -577,6 +677,7 @@
           placeholder="Glicemia"
           inputmode="decimal"
         >
+
 
         <input
           id="horarioJantar"
@@ -589,11 +690,13 @@
     </div>
 
 
+
     <div class="field">
 
       <label>
         📝 Observações
       </label>
+
 
       <textarea
         id="observacoes"
@@ -601,6 +704,7 @@
       ></textarea>
 
     </div>
+
 
 
     <button
@@ -620,9 +724,11 @@
   </div>
 
 
+
   <h2 class="history-title">
     Histórico
   </h2>
+
 
 
   <div id="historico">
@@ -633,10 +739,58 @@
 
   </div>
 
+
 </div>
 
 
+
 <script>
+
+
+/* =====================================================
+   FIREBASE
+   ===================================================== */
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyBFOFv0RsvmtrSOxchD3kUVAMqdmp6VVF0",
+
+  authDomain:
+    "glicemia-app-686aa.firebaseapp.com",
+
+  projectId:
+    "glicemia-app-686aa",
+
+  storageBucket:
+    "glicemia-app-686aa.firebasestorage.app",
+
+  messagingSenderId:
+    "312445316096",
+
+  appId:
+    "1:312445316096:web:3c274c00e91dfc2686fce5"
+
+};
+
+
+/*
+ * Inicializa Firebase
+ */
+
+firebase.initializeApp(
+  firebaseConfig
+);
+
+
+/*
+ * Firebase Messaging
+ */
+
+const messaging =
+  firebase.messaging();
+
+
 
 /* =====================================================
    URL DA API
@@ -645,7 +799,16 @@
 const API_URL =
   "https://script.google.com/macros/s/AKfycbx-ua_78tMGIbR25K7NlrTs18Gp4cnar8sHaqcnvyNMOy2dnPFBcMlnPUuzX7f7IR_a/exec";
 
-  const VAPID_PUBLIC_KEY = "BKgEe2TjSLJ6vItESKJX2eC_8T2VeXlzODt5J0dj3He6hHfeiYfGl_ZYgMph80RmO-YOdj7wpQy5e0x-l8fpRJw";
+
+
+/* =====================================================
+   CHAVE VAPID
+   ===================================================== */
+
+const VAPID_PUBLIC_KEY =
+  "BKgEe2TjSLJ6vItESKJX2eC_8T2VeXlzODt5J0dj3He6hHfeiYfGl_ZYgMph80RmO-YOdj7wpQy5e0x-l8fpRJw";
+
+
 
 /* =====================================================
    REGISTROS LOCAIS
@@ -653,8 +816,11 @@ const API_URL =
 
 let registros =
   JSON.parse(
-    localStorage.getItem("glicemia10dias")
+    localStorage.getItem(
+      "glicemia10dias"
+    )
   ) || [];
+
 
 
 /* =====================================================
@@ -663,22 +829,32 @@ let registros =
 
 function dataHoje() {
 
-  const hoje = new Date();
+  const hoje =
+    new Date();
+
 
   const dia =
-    String(hoje.getDate())
-      .padStart(2, "0");
+    String(
+      hoje.getDate()
+    ).padStart(2, "0");
+
 
   const mes =
-    String(hoje.getMonth() + 1)
-      .padStart(2, "0");
+    String(
+      hoje.getMonth() + 1
+    ).padStart(2, "0");
+
 
   const ano =
     hoje.getFullYear();
 
-  return `${dia}/${mes}/${ano}`;
+
+  return (
+    `${dia}/${mes}/${ano}`
+  );
 
 }
+
 
 
 /* =====================================================
@@ -691,12 +867,15 @@ function converterData(data) {
     return null;
   }
 
+
   const partes =
     String(data).split("/");
+
 
   if (partes.length !== 3) {
     return null;
   }
+
 
   return new Date(
     Number(partes[2]),
@@ -707,35 +886,63 @@ function converterData(data) {
 }
 
 
+
 /* =====================================================
    COMPARAR DATAS
    ===================================================== */
 
-function mesmaData(data1, data2) {
+function mesmaData(
+  data1,
+  data2
+) {
 
   return data1 === data2;
 
 }
 
 
+
 /* =====================================================
    CALCULAR DIA
    ===================================================== */
 
-function calcularDia(dataInicial, dataAtual) {
+function calcularDia(
+  dataInicial,
+  dataAtual
+) {
 
   const inicio =
-    converterData(dataInicial);
+    converterData(
+      dataInicial
+    );
+
 
   const atual =
-    converterData(dataAtual);
+    converterData(
+      dataAtual
+    );
+
 
   if (!inicio || !atual) {
     return 1;
   }
 
-  inicio.setHours(0, 0, 0, 0);
-  atual.setHours(0, 0, 0, 0);
+
+  inicio.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+
+  atual.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
 
   const diferenca =
     Math.floor(
@@ -743,12 +950,19 @@ function calcularDia(dataInicial, dataAtual) {
         atual.getTime() -
         inicio.getTime()
       ) /
-      (1000 * 60 * 60 * 24)
+      (
+        1000 *
+        60 *
+        60 *
+        24
+      )
     );
+
 
   return diferenca + 1;
 
 }
+
 
 
 /* =====================================================
@@ -757,23 +971,33 @@ function calcularDia(dataInicial, dataAtual) {
 
 function organizarRegistros() {
 
-  registros.sort(function(a, b) {
+  registros.sort(
+    function(a, b) {
 
-    const dataA =
-      converterData(a.data);
+      const dataA =
+        converterData(
+          a.data
+        );
 
-    const dataB =
-      converterData(b.data);
 
-    if (!dataA || !dataB) {
-      return 0;
+      const dataB =
+        converterData(
+          b.data
+        );
+
+
+      if (!dataA || !dataB) {
+        return 0;
+      }
+
+
+      return dataA - dataB;
+
     }
-
-    return dataA - dataB;
-
-  });
+  );
 
 }
+
 
 
 /* =====================================================
@@ -784,31 +1008,43 @@ function atualizarTela() {
 
   organizarRegistros();
 
+
   const hoje =
     dataHoje();
 
+
   document.getElementById(
     "dataAtual"
-  ).innerText = hoje;
+  ).innerText =
+    hoje;
+
 
   let quantidade =
     registros.length;
+
 
   if (quantidade > 10) {
     quantidade = 10;
   }
 
+
   document.getElementById(
     "diasPreenchidos"
-  ).innerText = quantidade;
+  ).innerText =
+    quantidade;
+
 
   document.getElementById(
     "progressFill"
   ).style.width =
-    (quantidade * 10) + "%";
+    (
+      quantidade * 10
+    ) + "%";
 
 
-  let diaAtual = 1;
+  let diaAtual =
+    1;
+
 
   if (registros.length > 0) {
 
@@ -820,13 +1056,16 @@ function atualizarTela() {
 
   }
 
+
   if (diaAtual < 1) {
     diaAtual = 1;
   }
 
+
   if (diaAtual > 10) {
     diaAtual = 10;
   }
+
 
   document.getElementById(
     "diaTitulo"
@@ -835,14 +1074,16 @@ function atualizarTela() {
 
 
   const registroHoje =
-    registros.find(function(registro) {
+    registros.find(
+      function(registro) {
 
-      return mesmaData(
-        registro.data,
-        hoje
-      );
+        return mesmaData(
+          registro.data,
+          hoje
+        );
 
-    });
+      }
+    );
 
 
   if (registroHoje) {
@@ -865,18 +1106,26 @@ function atualizarTela() {
     !registroHoje
   ) {
 
-    botao.disabled = true;
+    botao.disabled =
+      true;
 
-    botao.style.opacity = "0.6";
+
+    botao.style.opacity =
+      "0.6";
+
 
     botao.innerText =
       "Acompanhamento concluído";
 
   } else {
 
-    botao.disabled = false;
+    botao.disabled =
+      false;
 
-    botao.style.opacity = "1";
+
+    botao.style.opacity =
+      "1";
+
 
     botao.innerText =
       registroHoje
@@ -885,56 +1134,68 @@ function atualizarTela() {
 
   }
 
+
   mostrarHistorico();
 
 }
+
 
 
 /* =====================================================
    PREENCHER FORMULÁRIO
    ===================================================== */
 
-function preencherFormulario(registro) {
+function preencherFormulario(
+  registro
+) {
 
   document.getElementById(
     "jejum"
   ).value =
     registro.jejum || "";
 
+
   document.getElementById(
     "horarioJejum"
   ).value =
     registro.horarioJejum || "";
+
 
   document.getElementById(
     "cafe"
   ).value =
     registro.cafe || "";
 
+
   document.getElementById(
     "horarioCafe"
   ).value =
     registro.horarioCafe || "";
+
 
   document.getElementById(
     "almoco"
   ).value =
     registro.almoco || "";
 
+
   document.getElementById(
     "horarioAlmoco"
   ).value =
     registro.horarioAlmoco || "";
+
 
   document.getElementById(
     "jantar"
   ).value =
     registro.jantar || "";
 
+
   document.getElementById(
     "horarioJantar"
   ).value =
     registro.horarioJantar || "";
+
 
   document.getElementById(
     "observacoes"
@@ -942,6 +1203,7 @@ function preencherFormulario(registro) {
     registro.observacoes || "";
 
 }
+
 
 
 /* =====================================================
@@ -955,10 +1217,14 @@ async function salvarRegistro() {
       "status"
     );
 
+
   const hoje =
     dataHoje();
 
-  let diaAtual = 1;
+
+  let diaAtual =
+    1;
+
 
   if (registros.length > 0) {
 
@@ -970,13 +1236,16 @@ async function salvarRegistro() {
 
   }
 
+
   if (diaAtual > 10) {
 
     status.innerText =
       "Os 10 dias de acompanhamento já foram concluídos.";
 
+
     status.style.color =
       "#a85c72";
+
 
     return;
 
@@ -988,48 +1257,58 @@ async function salvarRegistro() {
     id:
       "Dia " + diaAtual,
 
+
     data:
       hoje,
+
 
     jejum:
       document.getElementById(
         "jejum"
       ).value,
 
+
     horarioJejum:
       document.getElementById(
         "horarioJejum"
       ).value,
+
 
     cafe:
       document.getElementById(
         "cafe"
       ).value,
 
+
     horarioCafe:
       document.getElementById(
         "horarioCafe"
       ).value,
+
 
     almoco:
       document.getElementById(
         "almoco"
       ).value,
 
+
     horarioAlmoco:
       document.getElementById(
         "horarioAlmoco"
       ).value,
+
 
     jantar:
       document.getElementById(
         "jantar"
       ).value,
 
+
     horarioJantar:
       document.getElementById(
         "horarioJantar"
       ).value,
+
 
     observacoes:
       document.getElementById(
@@ -1049,8 +1328,10 @@ async function salvarRegistro() {
     status.innerText =
       "Preencha pelo menos uma glicemia.";
 
+
     status.style.color =
       "#a85c72";
+
 
     return;
 
@@ -1060,29 +1341,38 @@ async function salvarRegistro() {
   status.innerText =
     "Salvando...";
 
+
   status.style.color =
     "#8b7a82";
 
 
   const indiceExistente =
-    registros.findIndex(function(registro) {
+    registros.findIndex(
+      function(registro) {
 
-      return mesmaData(
-        registro.data,
-        hoje
-      );
+        return mesmaData(
+          registro.data,
+          hoje
+        );
 
-    });
+      }
+    );
 
 
-  if (indiceExistente !== -1) {
+  if (
+    indiceExistente !== -1
+  ) {
 
-    registros[indiceExistente] =
+    registros[
+      indiceExistente
+    ] =
       dados;
 
   } else {
 
-    registros.push(dados);
+    registros.push(
+      dados
+    );
 
   }
 
@@ -1090,45 +1380,63 @@ async function salvarRegistro() {
   organizarRegistros();
 
 
-  if (registros.length > 10) {
+  if (
+    registros.length > 10
+  ) {
 
     registros =
-      registros.slice(0, 10);
+      registros.slice(
+        0,
+        10
+      );
 
   }
 
 
   localStorage.setItem(
     "glicemia10dias",
-    JSON.stringify(registros)
+    JSON.stringify(
+      registros
+    )
   );
 
 
   try {
 
-    await fetch(API_URL, {
+    await fetch(
+      API_URL,
+      {
 
-      method: "POST",
+        method:
+          "POST",
 
-      mode: "no-cors",
 
-      headers: {
+        mode:
+          "no-cors",
 
-        "Content-Type":
-          "text/plain;charset=utf-8"
 
-      },
+        headers: {
 
-      body:
-        JSON.stringify(dados)
+          "Content-Type":
+            "text/plain;charset=utf-8"
 
-    });
+        },
+
+
+        body:
+          JSON.stringify(
+            dados
+          )
+
+      }
+    );
 
 
     status.innerText =
       indiceExistente !== -1
         ? "✓ Registro atualizado!"
         : "✓ Registro salvo!";
+
 
     status.style.color =
       "#6f9278";
@@ -1139,6 +1447,7 @@ async function salvarRegistro() {
     status.innerText =
       "Salvo no aparelho. Verifique a conexão.";
 
+
     status.style.color =
       "#a85c72";
 
@@ -1148,6 +1457,7 @@ async function salvarRegistro() {
   atualizarTela();
 
 }
+
 
 
 /* =====================================================
@@ -1162,97 +1472,120 @@ function mostrarHistorico() {
     );
 
 
-  if (registros.length === 0) {
+  if (
+    registros.length === 0
+  ) {
 
     container.innerHTML =
       '<div class="empty">Nenhum registro salvo ainda.</div>';
+
 
     return;
 
   }
 
 
-  container.innerHTML = "";
+  container.innerHTML =
+    "";
 
 
   registros
     .slice()
     .reverse()
-    .forEach(function(registro) {
+    .forEach(
+      function(registro) {
 
-      const numeroDia =
-        calcularDia(
-          registros[0].data,
-          registro.data
+        const numeroDia =
+          calcularDia(
+            registros[0].data,
+            registro.data
+          );
+
+
+        const item =
+          document.createElement(
+            "div"
+          );
+
+
+        item.className =
+          "history-item";
+
+
+        item.innerHTML = `
+
+          <div class="history-header">
+
+            <span class="history-day">
+              Dia ${numeroDia}
+            </span>
+
+            <span class="history-date">
+              ${registro.data}
+            </span>
+
+          </div>
+
+
+          <div class="values">
+
+            <div class="value-box">
+
+              Jejum
+
+              <strong>
+                ${registro.jejum || "—"}
+              </strong>
+
+            </div>
+
+
+            <div class="value-box">
+
+              Café
+
+              <strong>
+                ${registro.cafe || "—"}
+              </strong>
+
+            </div>
+
+
+            <div class="value-box">
+
+              Almoço
+
+              <strong>
+                ${registro.almoco || "—"}
+              </strong>
+
+            </div>
+
+
+            <div class="value-box">
+
+              Jantar
+
+              <strong>
+                ${registro.jantar || "—"}
+              </strong>
+
+            </div>
+
+          </div>
+
+        `;
+
+
+        container.appendChild(
+          item
         );
 
-
-      const item =
-        document.createElement(
-          "div"
-        );
-
-
-      item.className =
-        "history-item";
-
-
-      item.innerHTML = `
-
-        <div class="history-header">
-
-          <span class="history-day">
-            Dia ${numeroDia}
-          </span>
-
-          <span class="history-date">
-            ${registro.data}
-          </span>
-
-        </div>
-
-        <div class="values">
-
-          <div class="value-box">
-            Jejum
-            <strong>
-              ${registro.jejum || "—"}
-            </strong>
-          </div>
-
-          <div class="value-box">
-            Café
-            <strong>
-              ${registro.cafe || "—"}
-            </strong>
-          </div>
-
-          <div class="value-box">
-            Almoço
-            <strong>
-              ${registro.almoco || "—"}
-            </strong>
-          </div>
-
-          <div class="value-box">
-            Jantar
-            <strong>
-              ${registro.jantar || "—"}
-            </strong>
-          </div>
-
-        </div>
-
-      `;
-
-
-      container.appendChild(
-        item
-      );
-
-    });
+      }
+    );
 
 }
+
 
 
 /* =====================================================
@@ -1279,66 +1612,86 @@ async function carregarRegistros() {
       Array.isArray(
         dados.registros
       )
-    ) {
+    {
 
       registros =
         dados.registros
-          .filter(function(registro) {
+          .filter(
+            function(registro) {
 
-            return registro.data;
+              return registro.data;
 
-          })
-          .map(function(registro) {
+            }
+          )
+          .map(
+            function(registro) {
 
-            return {
+              return {
 
-              id:
-                registro.id || "",
+                id:
+                  registro.id || "",
 
-              data:
-                registro.data || "",
 
-              jejum:
-                registro.jejum || "",
+                data:
+                  registro.data || "",
 
-              horarioJejum:
-                registro.horarioJejum || "",
 
-              cafe:
-                registro.cafe || "",
+                jejum:
+                  registro.jejum || "",
 
-              horarioCafe:
-                registro.horarioCafe || "",
 
-              almoco:
-                registro.almoco || "",
+                horarioJejum:
+                  registro.horarioJejum || "",
 
-              horarioAlmoco:
-                registro.horarioAlmoco || "",
 
-              jantar:
-                registro.jantar || "",
+                cafe:
+                  registro.cafe || "",
 
-              horarioJantar:
-                registro.horarioJantar || "",
 
-              observacoes:
-                registro.observacoes || ""
+                horarioCafe:
+                  registro.horarioCafe || "",
 
-            };
 
-          });
+                almoco:
+                  registro.almoco || "",
+
+
+                horarioAlmoco:
+                  registro.horarioAlmoco || "",
+
+
+                jantar:
+                  registro.jantar || "",
+
+
+                horarioJantar:
+                  registro.horarioJantar || "",
+
+
+                observacoes:
+                  registro.observacoes || ""
+
+              };
+
+            }
+          );
 
 
       organizarRegistros();
 
+
       registros =
-        registros.slice(0, 10);
+        registros.slice(
+          0,
+          10
+        );
 
 
       localStorage.setItem(
         "glicemia10dias",
-        JSON.stringify(registros)
+        JSON.stringify(
+          registros
+        )
       );
 
 
@@ -1356,17 +1709,18 @@ async function carregarRegistros() {
 }
 
 
+
 /* =====================================================
    LEMBRETES
    ===================================================== */
 
-let timerLembrete = null;
+let timerLembrete =
+  null;
+
 
 
 /*
- * Mostra a configuração inicial
- * somente se ainda não houver
- * um horário salvo.
+ * Verifica configuração
  */
 
 function verificarConfiguracaoLembrete() {
@@ -1395,6 +1749,7 @@ function verificarConfiguracaoLembrete() {
       "oculta"
     );
 
+
     botaoAlterar.classList.remove(
       "visivel"
     );
@@ -1405,9 +1760,11 @@ function verificarConfiguracaoLembrete() {
       "oculta"
     );
 
+
     botaoAlterar.classList.add(
       "visivel"
     );
+
 
     iniciarLembrete(
       horario
@@ -1418,8 +1775,9 @@ function verificarConfiguracaoLembrete() {
 }
 
 
+
 /*
- * Ativa o lembrete
+ * Ativa lembrete
  */
 
 async function ativarLembrete() {
@@ -1428,6 +1786,7 @@ async function ativarLembrete() {
     document.getElementById(
       "horarioLembrete"
     );
+
 
   const horario =
     campo.value;
@@ -1444,14 +1803,14 @@ async function ativarLembrete() {
     status.innerText =
       "Escolha um horário.";
 
+
     return;
 
   }
 
 
   /*
-   * Solicita permissão para
-   * notificações do navegador.
+   * Solicita permissão
    */
 
   if (
@@ -1480,11 +1839,26 @@ async function ativarLembrete() {
   }
 
 
+  /*
+   * Salva horário
+   */
+
   localStorage.setItem(
     "horarioLembreteGlicemia",
     horario
   );
 
+
+  /*
+   * Ativa Push Firebase
+   */
+
+  await ativarPush();
+
+
+  /*
+   * Esconde tela
+   */
 
   document.getElementById(
     "telaLembrete"
@@ -1500,6 +1874,11 @@ async function ativarLembrete() {
   );
 
 
+  /*
+   * Agenda enquanto o app
+   * estiver aberto
+   */
+
   iniciarLembrete(
     horario
   );
@@ -1511,7 +1890,8 @@ async function ativarLembrete() {
 
   if (
     "Notification" in window &&
-    Notification.permission === "granted"
+    Notification.permission ===
+    "granted"
   ) {
 
     try {
@@ -1519,10 +1899,12 @@ async function ativarLembrete() {
       new Notification(
         "Lembrete configurado 💗",
         {
+
           body:
             "Todos os dias às " +
             horario +
             " vamos lembrar você de registrar sua glicemia."
+
         }
       );
 
@@ -1533,8 +1915,9 @@ async function ativarLembrete() {
 }
 
 
+
 /*
- * Permite alterar o horário
+ * Alterar horário
  */
 
 function mostrarConfiguracaoLembrete() {
@@ -1542,7 +1925,8 @@ function mostrarConfiguracaoLembrete() {
   const horario =
     localStorage.getItem(
       "horarioLembreteGlicemia"
-    ) || "07:00";
+    ) ||
+    "07:00";
 
 
   document.getElementById(
@@ -1566,11 +1950,14 @@ function mostrarConfiguracaoLembrete() {
 }
 
 
+
 /*
- * Agenda o próximo lembrete
+ * Agenda próximo lembrete
  */
 
-function iniciarLembrete(horario) {
+function iniciarLembrete(
+  horario
+) {
 
   if (timerLembrete) {
 
@@ -1585,23 +1972,34 @@ function iniciarLembrete(horario) {
     horario.split(":");
 
 
-  if (partes.length !== 2) {
+  if (
+    partes.length !== 2
+  ) {
+
     return;
+
   }
 
 
   const hora =
-    Number(partes[0]);
+    Number(
+      partes[0]
+    );
+
 
   const minuto =
-    Number(partes[1]);
+    Number(
+      partes[1]
+    );
 
 
   if (
     isNaN(hora) ||
     isNaN(minuto)
   ) {
+
     return;
+
   }
 
 
@@ -1620,11 +2018,6 @@ function iniciarLembrete(horario) {
     0
   );
 
-
-  /*
-   * Se o horário já passou hoje,
-   * agenda para amanhã.
-   */
 
   if (
     proximo.getTime() <=
@@ -1649,10 +2042,6 @@ function iniciarLembrete(horario) {
 
         mostrarNotificacao();
 
-        /*
-         * Agenda novamente para
-         * o dia seguinte.
-         */
 
         iniciarLembrete(
           horario
@@ -1665,8 +2054,9 @@ function iniciarLembrete(horario) {
 }
 
 
+
 /*
- * Mostra a notificação
+ * Notificação local
  */
 
 function mostrarNotificacao() {
@@ -1674,13 +2064,15 @@ function mostrarNotificacao() {
   const titulo =
     "Hora da glicemia 💗";
 
+
   const mensagem =
     "Não se esqueça de registrar sua glicemia de hoje.";
 
 
   if (
     "Notification" in window &&
-    Notification.permission === "granted"
+    Notification.permission ===
+    "granted"
   ) {
 
     try {
@@ -1688,9 +2080,13 @@ function mostrarNotificacao() {
       new Notification(
         titulo,
         {
-          body: mensagem
+
+          body:
+            mensagem
+
         }
       );
+
 
       return;
 
@@ -1698,11 +2094,6 @@ function mostrarNotificacao() {
 
   }
 
-
-  /*
-   * Fallback caso notificações
-   * não estejam disponíveis.
-   */
 
   alert(
     titulo +
@@ -1713,101 +2104,297 @@ function mostrarNotificacao() {
 }
 
 
+
+/* =====================================================
+   FIREBASE PUSH
+   ===================================================== */
+
+async function ativarPush() {
+
+  try {
+
+    /*
+     * Verifica Service Worker
+     */
+
+    if (
+      !("serviceWorker" in navigator)
+    ) {
+
+      console.log(
+        "Service Worker não disponível."
+      );
+
+      return;
+
+    }
+
+
+    /*
+     * Verifica Firebase
+     */
+
+    if (
+      typeof firebase ===
+      "undefined"
+    ) {
+
+      console.log(
+        "Firebase não carregado."
+      );
+
+      return;
+
+    }
+
+
+    /*
+     * Verifica Notification
+     */
+
+    if (
+      !("Notification" in window)
+    ) {
+
+      console.log(
+        "Notificações não disponíveis."
+      );
+
+      return;
+
+    }
+
+
+    /*
+     * Permissão
+     */
+
+    let permissao =
+      Notification.permission;
+
+
+    if (
+      permissao ===
+      "default"
+    ) {
+
+      permissao =
+        await Notification.requestPermission();
+
+    }
+
+
+    if (
+      permissao !==
+      "granted"
+    ) {
+
+      console.log(
+        "Permissão para notificações não concedida."
+      );
+
+      return;
+
+    }
+
+
+    /*
+     * Pega o Service Worker
+     */
+
+    const registro =
+      await navigator.serviceWorker.ready;
+
+
+    /*
+     * Obtém token do Firebase
+     */
+
+    const token =
+      await messaging.getToken({
+
+        vapidKey:
+          VAPID_PUBLIC_KEY,
+
+        serviceWorkerRegistration:
+          registro
+
+      });
+
+
+    if (!token) {
+
+      console.log(
+        "Firebase não retornou token."
+      );
+
+      return;
+
+    }
+
+
+    /*
+     * Salva token localmente
+     */
+
+    localStorage.setItem(
+      "firebaseMessagingToken",
+      token
+    );
+
+
+    console.log(
+      "FIREBASE PUSH ATIVADO!"
+    );
+
+
+    console.log(
+      "Token FCM:",
+      token
+    );
+
+
+    /*
+     * Também guarda a inscrição
+     * existente do navegador
+     */
+
+    try {
+
+      const inscricao =
+        await registro.pushManager
+          .getSubscription();
+
+
+      if (inscricao) {
+
+        localStorage.setItem(
+          "pushSubscription",
+          JSON.stringify(
+            inscricao
+          )
+        );
+
+      }
+
+    } catch (erro) {
+
+      console.log(
+        "Não foi possível obter PushSubscription."
+      );
+
+    }
+
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao ativar Firebase Push:",
+      erro
+    );
+
+  }
+
+}
+
+
+
 /* =====================================================
    INICIALIZAÇÃO
    ===================================================== */
 
 atualizarTela();
 
+
 carregarRegistros();
 
+
 verificarConfiguracaoLembrete();
+
 
 
 /* =====================================================
    SERVICE WORKER / PWA
    ===================================================== */
 
-if ("serviceWorker" in navigator) {
+if (
+  "serviceWorker" in navigator
+) {
 
-  window.addEventListener("load", function() {
+  window.addEventListener(
+    "load",
+    function() {
 
-    navigator.serviceWorker
-      .register("./sw.js")
-      .then(function(registro) {
+      navigator.serviceWorker
+        .register(
+          "./sw.js"
+        )
+        .then(
+          function(registro) {
 
-        console.log(
-          "Service Worker registrado:",
-          registro.scope
+            console.log(
+              "Service Worker registrado:",
+              registro.scope
+            );
+
+          }
+        )
+        .catch(
+          function(erro) {
+
+            console.log(
+              "Erro ao registrar Service Worker:",
+              erro
+            );
+
+          }
         );
 
-      })
-      .catch(function(erro) {
-
-        console.log(
-          "Erro ao registrar Service Worker:",
-          erro
-        );
-
-      });
-
-  });
+    }
+  );
 
 }
 
-async function ativarPush() {
 
-  try {
 
-    if (!("serviceWorker" in navigator)) {
-      console.log("Service Worker não disponível.");
-      return;
+/* =====================================================
+   TENTAR ATIVAR PUSH
+   ===================================================== */
+
+/*
+ * Se o horário já estiver configurado,
+ * tenta registrar o Firebase novamente.
+ */
+
+window.addEventListener(
+  "load",
+  function() {
+
+    const horario =
+      localStorage.getItem(
+        "horarioLembreteGlicemia"
+      );
+
+
+    if (horario) {
+
+      setTimeout(
+        function() {
+
+          ativarPush();
+
+        },
+        1000
+      );
+
     }
-
-    if (!("PushManager" in window)) {
-      console.log("Push não disponível neste navegador.");
-      return;
-    }
-
-    const permissao = await Notification.requestPermission();
-
-    if (permissao !== "granted") {
-      console.log("Permissão para notificações não concedida.");
-      return;
-    }
-
-    const registro = await navigator.serviceWorker.ready;
-
-    let inscricao = await registro.pushManager.getSubscription();
-
-    if (!inscricao) {
-
-      inscricao = await registro.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: VAPID_PUBLIC_KEY
-      });
-
-    }
-
-    console.log("PUSH ATIVADO!");
-    console.log(inscricao);
-
-    localStorage.setItem(
-      "pushSubscription",
-      JSON.stringify(inscricao)
-    );
-
-  } catch (erro) {
-
-    console.error("Erro ao ativar Push:", erro);
 
   }
+);
 
-}
-  
-  ativarPush();
 
 </script>
-  
+
+
 </body>
 </html>
